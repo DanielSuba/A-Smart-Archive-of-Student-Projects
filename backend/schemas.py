@@ -108,3 +108,52 @@ class ProjectListOut(BaseModel):
     page: int
     per_page: int
     pages: int
+
+
+class PortfolioCreate(BaseModel):
+    title: Optional[str] = "Moje Portfolio"
+    description: Optional[str] = ""
+    project_ids: List[int]
+
+
+class PortfolioProjectOut(BaseModel):
+    id: int
+    order_index: int
+    project: ProjectOut
+    class Config:
+        from_attributes = True
+
+
+class PortfolioOut(BaseModel):
+    id: int
+    user_id: int
+    public_slug: str
+    title: Optional[str]
+    description: Optional[str]
+    created_at: datetime
+    owner: UserOut
+    projects: List[PortfolioProjectOut] = []
+    class Config:
+        from_attributes = True
+
+
+class SkillProfileItem(BaseModel):
+    technology: str
+    category: Optional[str]
+    weight: float
+    project_count: int
+    avg_difficulty: float
+
+
+class SkillProfileOut(BaseModel):
+    user: UserOut
+    skills: List[SkillProfileItem]
+    total_projects: int
+    top_technologies: List[str]
+    recommendations: List[str]
+
+
+class TechExtractionResult(BaseModel):
+    technologies: List[dict]
+    source: str
+    has_cicd: bool
