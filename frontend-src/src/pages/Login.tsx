@@ -28,7 +28,7 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-card card">
-        <h1 className="auth-title">📚 Zaloguj się</h1>
+        <h1 className="auth-title">Zaloguj się</h1>
         <p className="auth-subtitle">Inteligentne Archiwum Projektów Studenta</p>
         {error && <div className="alert alert-error">{error}</div>}
         <form onSubmit={handleSubmit}>

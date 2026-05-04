@@ -58,7 +58,7 @@ export default function MyProjects() {
 
   return (
     <div>
-      {offline && <div className="offline-banner">⚠️ Jesteś w trybie offline. Przeglądasz zapisaną wersję projektów.</div>}
+      {offline && <div className="offline-banner">Jesteś w trybie offline. Przeglądasz zapisaną wersję projektów.</div>}
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
           <h1 className="page-title">Moje Projekty</h1>
@@ -69,7 +69,7 @@ export default function MyProjects() {
 
       {loading ? <div className="spinner" /> : projects.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">📂</div>
+          <div className="empty-state-icon">Brak</div>
           <h3>Brak projektów</h3>
           <p>Dodaj swój pierwszy projekt, aby rozpocząć budowanie archiwum.</p>
           <Link className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-flex' }} to="/add-project">+ Dodaj Projekt</Link>

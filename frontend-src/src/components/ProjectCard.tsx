@@ -37,7 +37,7 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
         {project.year} · {project.role}
         {showOwner && project.owner && <> · <span style={{ color: 'var(--accent)' }}>{project.owner.name}</span></>}
         {project.has_cicd && <> · <span className="badge badge-cicd">CI/CD</span></>}
-        <span style={{ marginLeft: '0.5rem', fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--text2)' }}>
+        <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--text2)' }}>
           [{project.difficulty_score.toFixed(0)} pkt]
         </span>
       </div>
@@ -58,7 +58,7 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
       <div className="card-actions">
         <Link className="btn btn-accent btn-sm" to={`/project/${project.id}`}>Szczegóły</Link>
         {project.repo_url && (
-          <a className="btn btn-secondary btn-sm" href={project.repo_url} target="_blank" rel="noreferrer">GitHub ↗</a>
+          <a className="btn btn-secondary btn-sm" href={project.repo_url} target="_blank" rel="noreferrer">GitHub</a>
         )}
         {canEdit && onDelete && (
           <button className="btn btn-danger btn-sm" onClick={() => onDelete(project.id)}>Usuń</button>

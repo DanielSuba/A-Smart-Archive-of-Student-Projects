@@ -301,13 +301,13 @@ def seed():
                 db.add(pp)
 
         db.commit()
-        print("✅ Seedowanie zakończone sukcesem!")
+        print("Seedowanie zakończone sukcesem!")
         print(f"   Użytkownicy: student1=anna.kowalska@student.pl / demo123")
         print(f"   Admin: admin@archiwum.pl / admin123")
 
     except Exception as e:
         db.rollback()
-        print(f"❌ Błąd seedowania: {e}")
+        print(f"Błąd seedowania: {e}")
         raise
     finally:
         db.close()

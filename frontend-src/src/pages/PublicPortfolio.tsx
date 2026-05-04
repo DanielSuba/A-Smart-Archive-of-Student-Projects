@@ -19,7 +19,7 @@ export default function PublicPortfolio() {
   if (loading) return <div className="spinner" />;
   if (error) return (
     <div style={{ maxWidth: 600, margin: '4rem auto', textAlign: 'center' }}>
-      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
+      <div style={{ fontSize: '1rem', marginBottom: '1rem' }}>Brak wyników</div>
       <h2 style={{ marginBottom: '0.5rem' }}>Nie znaleziono portfolio</h2>
       <p style={{ color: 'var(--text2)' }}>{error}</p>
     </div>
@@ -38,7 +38,7 @@ export default function PublicPortfolio() {
       <style>{`@media print { .no-print { display: none !important; } .card { break-inside: avoid; } }`}</style>
 
       <div className="pub-header">
-        <div className="pub-badge no-print">🌐 Publiczne Portfolio · Read-Only</div>
+        <div className="pub-badge no-print">Publiczne Portfolio · Read-Only</div>
         <h1 className="pub-title" style={{ marginTop: '0.75rem' }}>{portfolio.title}</h1>
         <p style={{ color: 'var(--text2)', marginTop: '0.5rem' }}>
           {portfolio.owner.name} · {portfolio.projects.length} projektów
@@ -46,7 +46,7 @@ export default function PublicPortfolio() {
         {portfolio.description && <p style={{ color: 'var(--text2)', fontSize: '0.9rem', marginTop: '0.5rem' }}>{portfolio.description}</p>}
         <div style={{ marginTop: '1rem' }} className="no-print">
           <button className="btn btn-primary" onClick={handlePrint}>
-            📄 Pobierz jako PDF (Ctrl+P)
+            Pobierz jako PDF (Ctrl+P)
           </button>
         </div>
       </div>
@@ -61,14 +61,14 @@ export default function PublicPortfolio() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.75rem' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                      <span style={{ fontFamily: 'monospace', color: 'var(--text2)', fontSize: '0.8rem' }}>#{idx + 1}</span>
-                      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.2rem' }}>{p.title}</h2>
+                      <span style={{ color: 'var(--text2)', fontSize: '0.8rem' }}>#{idx + 1}</span>
+                      <h2 style={{ fontFamily: 'inherit', fontSize: '1.2rem' }}>{p.title}</h2>
                     </div>
                     <div style={{ color: 'var(--text2)', fontSize: '0.83rem' }}>{p.year} · {p.role}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     {diffBadge(p.difficulty_level)}
-                    <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--text2)', marginTop: '0.25rem' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text2)', marginTop: '0.25rem' }}>
                       Score: {p.difficulty_score.toFixed(0)}/100
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export default function PublicPortfolio() {
 
                 {p.repo_url && (
                   <div style={{ marginTop: '0.5rem', fontSize: '0.82rem' }}>
-                    <a href={p.repo_url} className="public-link" target="_blank" rel="noreferrer">🔗 {p.repo_url}</a>
+                    <a href={p.repo_url} className="public-link" target="_blank" rel="noreferrer">{p.repo_url}</a>
                   </div>
                 )}
               </div>

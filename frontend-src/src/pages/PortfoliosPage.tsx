@@ -68,7 +68,7 @@ export default function PortfoliosPage() {
 
       {portfolios.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">📋</div>
+          <div className="empty-state-icon">Brak</div>
           <h3>Brak portfolio</h3>
           <p>Wybierz projekty i wygeneruj swoje pierwsze portfolio.</p>
           <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setShowModal(true)}>Generuj Portfolio</button>
@@ -86,11 +86,11 @@ export default function PortfoliosPage() {
               </div>
               {p.description && <p style={{ color: 'var(--text2)', fontSize: '0.83rem', margin: '0.5rem 0' }}>{p.description}</p>}
               <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <a className="btn btn-accent btn-sm" href={portfolioUrl(p.public_slug)} target="_blank" rel="noreferrer">🌐 Otwórz</a>
+                <a className="btn btn-accent btn-sm" href={portfolioUrl(p.public_slug)} target="_blank" rel="noreferrer">Otwórz</a>
                 <button className="btn btn-secondary btn-sm" onClick={() => {
                   navigator.clipboard.writeText(portfolioUrl(p.public_slug));
                   toast.success('Link skopiowany!');
-                }}>📋 Kopiuj link</button>
+                }}>Kopiuj link</button>
                 <button className="btn btn-danger btn-sm" onClick={() => handleDelete(p.id)}>Usuń</button>
               </div>
               <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--text2)' }}>
@@ -104,7 +104,7 @@ export default function PortfoliosPage() {
       {showModal && (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
           <div className="modal">
-            <div className="modal-title">📋 Generuj nowe portfolio</div>
+            <div className="modal-title">Generuj nowe portfolio</div>
 
             <div className="form-group">
               <label className="form-label">Nazwa portfolio</label>
@@ -134,7 +134,7 @@ export default function PortfoliosPage() {
 
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
               <button className="btn btn-primary" onClick={handleCreate} disabled={creating || selected.size === 0}>
-                {creating ? '⏳ Generowanie...' : '✨ Generuj Portfolio'}
+                {creating ? 'Generowanie...' : 'Generuj Portfolio'}
               </button>
               <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Anuluj</button>
             </div>

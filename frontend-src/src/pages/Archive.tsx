@@ -64,7 +64,7 @@ export default function Archive() {
           <input className="form-input search-input" placeholder="Szukaj po nazwie lub opisie..."
             value={searchInput} onChange={e => setSearchInput(e.target.value)} />
           <button className="btn btn-secondary" type="submit">Szukaj</button>
-          {search && <button className="btn btn-secondary" type="button" onClick={() => { setSearch(''); setSearchInput(''); }}>✕ Wyczyść</button>}
+          {search && <button className="btn btn-secondary" type="button" onClick={() => { setSearch(''); setSearchInput(''); }}>Wyczyść</button>}
         </form>
 
         <select className="form-select" style={{ width: 'auto', minWidth: '150px' }}
@@ -86,7 +86,7 @@ export default function Archive() {
 
       {loading ? <div className="spinner" /> : projects.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">🔍</div>
+          <div className="empty-state-icon">Brak</div>
           <h3>Brak wyników</h3>
           <p>Spróbuj zmienić kryteria wyszukiwania.</p>
         </div>

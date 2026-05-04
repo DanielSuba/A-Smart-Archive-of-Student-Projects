@@ -80,7 +80,7 @@ export default function ProjectDetail() {
   return (
     <div>
       <div style={{ marginBottom: '1rem' }}>
-        <Link className="btn btn-secondary btn-sm" to="/my-projects">← Wróć</Link>
+        <Link className="btn btn-secondary btn-sm" to="/my-projects">Wróć</Link>
       </div>
 
       {editing ? (
@@ -125,20 +125,20 @@ export default function ProjectDetail() {
           <div>
             <div className="card" style={{ marginBottom: '1rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.75rem' }}>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem' }}>{project.title}</h1>
+                <h1 style={{ fontFamily: 'inherit', fontSize: '1.4rem' }}>{project.title}</h1>
                 <DiffBadge level={project.difficulty_level} />
               </div>
               <div className="project-meta" style={{ fontSize: '0.875rem', marginBottom: '0.75rem' }}>
                 <strong>{project.year}</strong> · {project.role}
                 {project.owner && <> · <span style={{ color: 'var(--accent)' }}>{project.owner.name}</span></>}
-                {project.has_cicd && <span className="badge badge-cicd" style={{ marginLeft: '0.5rem' }}>⚡ CI/CD</span>}
+                {project.has_cicd && <span className="badge badge-cicd" style={{ marginLeft: '0.5rem' }}>CI/CD</span>}
               </div>
               <p style={{ color: 'var(--text2)', lineHeight: 1.7, marginBottom: '1rem' }}>{project.description}</p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {canEdit && <button className="btn btn-secondary btn-sm" onClick={() => setEditing(true)}>✏️ Edytuj</button>}
-                {project.repo_url && <a className="btn btn-accent btn-sm" href={project.repo_url} target="_blank" rel="noreferrer">🔗 Repozytorium</a>}
-                {canEdit && <button className="btn btn-secondary btn-sm" onClick={handleAnalyze} disabled={analyzing}>{analyzing ? '⏳ Analizowanie...' : '🔍 Przeanalizuj ponownie'}</button>}
-                {canEdit && <button className="btn btn-danger btn-sm" onClick={handleDelete}>🗑 Usuń</button>}
+                {canEdit && <button className="btn btn-secondary btn-sm" onClick={() => setEditing(true)}>Edytuj</button>}
+                {project.repo_url && <a className="btn btn-accent btn-sm" href={project.repo_url} target="_blank" rel="noreferrer">Repozytorium</a>}
+                {canEdit && <button className="btn btn-secondary btn-sm" onClick={handleAnalyze} disabled={analyzing}>{analyzing ? 'Analizowanie...' : 'Przeanalizuj ponownie'}</button>}
+                {canEdit && <button className="btn btn-danger btn-sm" onClick={handleDelete}>Usuń</button>}
               </div>
             </div>
 
@@ -149,7 +149,7 @@ export default function ProjectDetail() {
               ) : (
                 project.technologies.sort((a, b) => b.confidence_level - a.confidence_level).map(t => (
                   <div key={t.id} className="confidence-bar">
-                    <span style={{ minWidth: '120px', fontSize: '0.82rem', fontFamily: 'monospace' }}>{t.name}</span>
+                    <span style={{ minWidth: '120px', fontSize: '0.82rem' }}>{t.name}</span>
                     <ConfBar confidence={t.confidence_level} />
                     <span style={{ minWidth: '40px', textAlign: 'right', color: 'var(--text2)' }}>{t.confidence_level.toFixed(0)}%</span>
                     {t.category && <span className="badge badge-tech">{t.category}</span>}
@@ -163,7 +163,7 @@ export default function ProjectDetail() {
             <div className="card" style={{ marginBottom: '1rem' }}>
               <div className="section-title">Scoring trudności</div>
               <div style={{ textAlign: 'center', padding: '0.75rem 0' }}>
-                <div style={{ fontSize: '2.5rem', fontFamily: "'IBM Plex Mono', monospace", color: 'var(--accent)', fontWeight: 600 }}>
+                <div style={{ fontSize: '2.5rem', fontFamily: 'inherit', color: 'var(--accent)', fontWeight: 600 }}>
                   {project.difficulty_score.toFixed(0)}
                 </div>
                 <div style={{ color: 'var(--text2)', fontSize: '0.82rem', marginBottom: '0.75rem' }}>punktów / 100</div>
@@ -179,12 +179,12 @@ export default function ProjectDetail() {
             <div className="card">
               <div className="section-title">Informacje</div>
               {[
-                ['📅 Rok', project.year],
-                ['👤 Rola', project.role],
-                ['🔧 Technologii', project.technologies.length],
-                ['⚡ CI/CD', project.has_cicd ? 'Tak' : 'Nie'],
-                ['📄 Dokumentacja', project.doc_file_path ? 'Tak (PDF)' : 'Nie'],
-                ['🗓 Dodano', new Date(project.created_at).toLocaleDateString('pl')],
+                ['Rok', project.year],
+                ['Rola', project.role],
+                ['Technologii', project.technologies.length],
+                ['CI/CD', project.has_cicd ? 'Tak' : 'Nie'],
+                ['Dokumentacja', project.doc_file_path ? 'Tak (PDF)' : 'Nie'],
+                ['Dodano', new Date(project.created_at).toLocaleDateString('pl')],
               ].map(([label, val]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--border)', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text2)' }}>{label}</span>

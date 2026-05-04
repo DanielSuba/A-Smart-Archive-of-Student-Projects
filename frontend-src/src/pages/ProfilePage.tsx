@@ -46,7 +46,7 @@ export default function ProfilePage() {
           <div className="section-title">Mapa Umiejętności (Radar)</div>
           {radarData.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-state-icon">📊</div>
+              <div className="empty-state-icon">Brak</div>
               <h3>Brak danych</h3>
               <p>Dodaj projekty, aby zbudować profil kompetencji.</p>
             </div>
@@ -70,7 +70,7 @@ export default function ProfilePage() {
           {profile.skills.slice(0, 10).map(s => (
             <div key={s.technology} className="skill-bar">
               <div className="skill-bar-label">
-                <span style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{s.technology}</span>
+                <span>{s.technology}</span>
                 <span style={{ color: 'var(--text2)', fontSize: '0.75rem' }}>
                   {s.project_count} proj · Ø {s.avg_difficulty.toFixed(0)} pkt
                 </span>
@@ -83,7 +83,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="card">
-          <div className="section-title">🏆 Top technologie</div>
+          <div className="section-title">Top technologie</div>
           <div className="tag-cloud">
             {profile.top_technologies.map((t, i) => (
               <span key={t} className="badge" style={{
@@ -97,13 +97,13 @@ export default function ProfilePage() {
         </div>
 
         <div className="card">
-          <div className="section-title">🎯 Rekomendowane do nauki</div>
+          <div className="section-title">Rekomendowane do nauki</div>
           <p style={{ color: 'var(--text2)', fontSize: '0.82rem', marginBottom: '0.75rem' }}>
             Na podstawie Twojego profilu, warto poznać:
           </p>
           <div className="tag-cloud">
             {profile.recommendations.map(r => (
-              <span key={r} className="rec-tag">→ {r}</span>
+              <span key={r} className="rec-tag">{r}</span>
             ))}
           </div>
           {profile.recommendations.length === 0 && (
@@ -117,7 +117,7 @@ export default function ProfilePage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.5rem' }}>
           {profile.skills.map(s => (
             <div key={s.technology} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0.6rem', background: 'var(--bg3)', borderRadius: '6px', fontSize: '0.82rem' }}>
-              <span style={{ fontFamily: 'monospace' }}>{s.technology}</span>
+              <span>{s.technology}</span>
               <span style={{ color: 'var(--text2)' }}>{s.project_count}×</span>
             </div>
           ))}

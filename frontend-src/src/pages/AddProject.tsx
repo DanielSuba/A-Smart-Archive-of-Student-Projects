@@ -73,7 +73,7 @@ export default function AddProject() {
               placeholder="Opisz projekt w co najmniej 3 zdaniach: cel, technologie, wyzwania..."
               rows={5} />
             <div className={`form-hint ${sentenceCount >= 3 ? '' : 'form-error'}`}>
-              {sentenceCount < 3 ? `⚠ ${sentenceCount}/3 zdań — wymagane minimum 3` : `✓ ${sentenceCount} zdań`}
+              {sentenceCount < 3 ? `${sentenceCount}/3 zdań — wymagane minimum 3` : `${sentenceCount} zdań`}
             </div>
           </div>
 
@@ -98,23 +98,23 @@ export default function AddProject() {
             <label className="form-label">Link do repozytorium (GitHub, GitLab...)</label>
             <input className="form-input" value={form.repo_url} onChange={set('repo_url')}
               placeholder="https://github.com/uzytkownik/repozytorium" type="url" />
-            <div className="form-hint">🔍 Technologie zostaną wykryte automatycznie z GitHub API</div>
+            <div className="form-hint">Technologie zostaną wykryte automatycznie z GitHub API</div>
           </div>
 
           <div className="form-group">
             <label className="form-label">lub wgraj plik dokumentacji (PDF, package.json)</label>
             <input className="form-input" type="file" accept=".pdf,.json,.txt,.zip"
               onChange={e => setFile(e.target.files?.[0] || null)} />
-            {file && <div className="form-hint" style={{ color: 'var(--accent2)' }}>✓ Plik: {file.name}</div>}
+            {file && <div className="form-hint" style={{ color: 'var(--accent2)' }}>Plik: {file.name}</div>}
           </div>
 
           {!sourceValid && form.title && (
-            <div className="alert alert-warning">⚠ Podaj link do repozytorium lub wgraj plik dokumentacji</div>
+            <div className="alert alert-warning">Podaj link do repozytorium lub wgraj plik dokumentacji</div>
           )}
 
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
             <button className="btn btn-primary" type="submit" disabled={loading || !descValid || !sourceValid}>
-              {loading ? '⏳ Analizowanie...' : '💾 Zapisz i Analizuj'}
+              {loading ? 'Analizowanie...' : 'Zapisz i Analizuj'}
             </button>
             <button className="btn btn-secondary" type="button" onClick={() => navigate(-1)}>Anuluj</button>
           </div>

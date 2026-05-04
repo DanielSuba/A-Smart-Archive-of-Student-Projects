@@ -18,7 +18,7 @@ function Nav() {
   const active = (p: string) => loc.pathname === p ? 'nav-link active' : 'nav-link';
   return (
     <nav className="navbar">
-      <div className="nav-brand">📚 Archiwum Projektów</div>
+      <div className="nav-brand">Archiwum Projektów</div>
       <div className="nav-links">
         {!isGuest && <>
           <Link className={active('/my-projects')} to="/my-projects">Moje Projekty</Link>
