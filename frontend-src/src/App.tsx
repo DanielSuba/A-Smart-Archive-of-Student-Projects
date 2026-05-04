@@ -3,6 +3,11 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import MyProjects from './pages/MyProjects';
+import Archive from './pages/Archive';
+import ProjectDetail from './pages/ProjectDetail';
+import AddProject from './pages/AddProject';
+
 
 import './App.css';
 
@@ -16,7 +21,9 @@ function Nav() {
       <div className="nav-links">
         {!isGuest && <>
           <Link className={active('/my-projects')} to="/my-projects">Moje Projekty</Link>
-          
+          <Link className={active('/archive')} to="/archive">Archiwum</Link>
+		  
+		  
 		  
         </>}
       </div>
@@ -41,7 +48,13 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to="/my-projects" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
+        <Route path="/portfolio/:slug" element={<PublicPortfolio />} />
+        <Route path="/my-projects" element={<Protected><MyProjects /></Protected>} />
+        <Route path="/archive" element={<Protected><Archive /></Protected>} />
+        <Route path="/project/:id" element={<Protected><ProjectDetail /></Protected>} />
+        <Route path="/add-project" element={<Protected><AddProject /></Protected>} />
+		
+		
 		
       </Routes>
     </main>

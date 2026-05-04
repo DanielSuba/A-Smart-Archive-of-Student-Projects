@@ -58,6 +58,10 @@ from routers.portfolio import profile_router, portfolio_router
 from routers.technologies import router as tech_router
 
 app.include_router(auth_router)
+app.include_router(projects_router)
+app.include_router(profile_router)
+app.include_router(portfolio_router)
+app.include_router(tech_router)
 
 _UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(_UPLOAD_DIR, exist_ok=True)
