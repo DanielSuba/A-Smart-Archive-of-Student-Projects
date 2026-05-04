@@ -7,8 +7,9 @@ import MyProjects from './pages/MyProjects';
 import Archive from './pages/Archive';
 import ProjectDetail from './pages/ProjectDetail';
 import AddProject from './pages/AddProject';
-
-
+import ProfilePage from './pages/ProfilePage';
+import PortfoliosPage from './pages/PortfoliosPage';
+import PublicPortfolio from './pages/PublicPortfolio';
 import './App.css';
 
 function Nav() {
@@ -22,9 +23,9 @@ function Nav() {
         {!isGuest && <>
           <Link className={active('/my-projects')} to="/my-projects">Moje Projekty</Link>
           <Link className={active('/archive')} to="/archive">Archiwum</Link>
-		  
-		  
-		  
+          <Link className={active('/profile')} to="/profile">Profil</Link>
+          <Link className={active('/portfolios')} to="/portfolios">Portfolio</Link>
+          <Link className="nav-link add-btn" to="/add-project">+ Dodaj Projekt</Link>
         </>}
       </div>
       <div className="nav-user">
@@ -53,9 +54,8 @@ function AppRoutes() {
         <Route path="/archive" element={<Protected><Archive /></Protected>} />
         <Route path="/project/:id" element={<Protected><ProjectDetail /></Protected>} />
         <Route path="/add-project" element={<Protected><AddProject /></Protected>} />
-		
-		
-		
+        <Route path="/profile" element={<Protected><ProfilePage /></Protected>} />
+        <Route path="/portfolios" element={<Protected><PortfoliosPage /></Protected>} />
       </Routes>
     </main>
   </>);

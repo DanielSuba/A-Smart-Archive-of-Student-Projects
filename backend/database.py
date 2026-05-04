@@ -17,6 +17,20 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+
+class UserRole(str, enum.Enum):
+    STUDENT = "STUDENT"
+    ADMIN = "ADMIN"
+    GUEST = "GUEST"
+
+
+class DifficultyLevel(str, enum.Enum):
+    BEGINNER = "Początkujący"
+    INTERMEDIATE = "Średni"
+    ADVANCED = "Zaawansowany"
+    EXPERT = "Ekspert"
+
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
