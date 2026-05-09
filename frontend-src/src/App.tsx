@@ -13,9 +13,11 @@ import PublicPortfolio from './pages/PublicPortfolio';
 import About from './pages/About';
 import './App.css';
 
+// Funkcja służy do renderowania głównego paska nawigacji aplikacji.
 function Nav() {
   const { user, logout, isGuest } = useAuth();
   const loc = useLocation();
+  // Funkcja służy do wyznaczania aktywnej klasy linku nawigacji.
   const active = (p: string) => loc.pathname === p ? 'nav-link active' : 'nav-link';
   return (
     <nav className="navbar">
@@ -38,11 +40,13 @@ function Nav() {
   );
 }
 
+// Funkcja służy do blokowania dostępu gościom do chronionych stron.
 function Protected({ children }: { children: React.ReactNode }) {
   const { isGuest } = useAuth();
   return isGuest ? <Navigate to="/login" replace /> : <>{children}</>;
 }
 
+// Funkcja służy do definiowania tras i głównego układu aplikacji.
 function AppRoutes() {
   return (<>
     <Nav />
@@ -64,6 +68,7 @@ function AppRoutes() {
   </>);
 }
 
+// Funkcja służy do uruchamiania aplikacji z providerem autoryzacji i routerem.
 export default function App() {
   return (
     <AuthProvider>

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getPortfolio } from '../services/api';
 import type { Portfolio } from '../types';
 
+// Funkcja służy do renderowania publicznego widoku portfolio.
 export default function PublicPortfolio() {
   const { slug } = useParams<{ slug: string }>();
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
@@ -14,6 +15,7 @@ export default function PublicPortfolio() {
     getPortfolio(slug!).then(r => setPortfolio(r.data)).catch(() => setError('Portfolio nie istnieje lub zostało usunięte.')).finally(() => setLoading(false));
   }, [slug]);
 
+  // Funkcja służy do uruchamiania drukowania lub zapisu portfolio do PDF.
   const handlePrint = () => window.print();
 
   if (loading) return <div className="spinner" />;
@@ -26,6 +28,7 @@ export default function PublicPortfolio() {
   );
   if (!portfolio) return null;
 
+  // Funkcja służy do renderowania tekstowej etykiety poziomu trudności w portfolio.
   const diffBadge = (level: string) => {
     const colors: Record<string, string> = {
       'Początkujący': '#3fb950', 'Średni': '#58a6ff', 'Zaawansowany': '#d2a8ff', 'Ekspert': '#f78166'

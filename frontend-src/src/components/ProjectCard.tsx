@@ -10,6 +10,7 @@ interface Props {
   onSelect?: (id: number, checked: boolean) => void;
 }
 
+// Funkcja służy do wybierania klasy wizualnej dla poziomu trudności projektu.
 function diffClass(level: string) {
   if (level === 'Początkujący') return 'badge badge-beginner';
   if (level === 'Średni') return 'badge badge-intermediate';
@@ -17,6 +18,7 @@ function diffClass(level: string) {
   return 'badge badge-expert';
 }
 
+// Funkcja służy do renderowania karty projektu na listach projektów.
 export default function ProjectCard({ project, onDelete, showOwner, selected, onSelect }: Props) {
   const { user, isAdmin } = useAuth();
   const canEdit = user?.id === project.user_id || isAdmin;

@@ -8,8 +8,8 @@ import httpx
 from PyPDF2 import PdfReader
 
 
-AI_URL = os.getenv("AI_DOC_EVALUATOR_URL", "http://127.0.0.1:1234/v1/chat/completions")
-AI_MODEL = os.getenv("AI_DOC_EVALUATOR_MODEL", "local-model")
+AI_URL = os.getenv("AI_DOC_EVALUATOR_URL", "http://127.0.0.1:1234/v1/chat/completions")  # Tut trzeba podać API key AI
+AI_MODEL = os.getenv("AI_DOC_EVALUATOR_MODEL", "local-model")  # Tut trzeba nazwę(także możno napisać "local-model")
 MAX_CHARS = 12000
 
 DOCUMENTATION_PROMPT = """
@@ -44,10 +44,12 @@ __DOCUMENTATION_TEXT__
 """.strip()
 
 
+# Funkcja służy do budowania promptu oceny dokumentacji na podstawie wyciągniętego tekstu.
 def build_documentation_prompt(documentation_text: str) -> str:
     return DOCUMENTATION_PROMPT.replace("__DOCUMENTATION_TEXT__", documentation_text)
 
 
+# Funkcja służy do wyciągania skróconego tekstu dokumentacji z obsługiwanego pliku.
 def extract_documentation_excerpt(file_path: str) -> str | None:
     path = Path(file_path)
     if not path.exists():
@@ -61,6 +63,7 @@ def extract_documentation_excerpt(file_path: str) -> str | None:
     return None
 
 
+# Funkcja służy do wyciągania kluczowych fragmentów tekstu z pliku PDF.
 def _extract_pdf_excerpt(path: Path) -> str | None:
     try:
         reader = PdfReader(str(path))
@@ -92,6 +95,7 @@ def _extract_pdf_excerpt(path: Path) -> str | None:
     return excerpt[:MAX_CHARS] if excerpt else None
 
 
+# Funkcja służy do oceniania dokumentacji przez lokalne API AI.
 async def evaluate_documentation(file_path: str) -> tuple[str, dict[str, Any] | None]:
     excerpt = extract_documentation_excerpt(file_path)
     if not excerpt:
@@ -118,6 +122,7 @@ async def evaluate_documentation(file_path: str) -> tuple[str, dict[str, Any] | 
     return "ready", parsed
 
 
+# Funkcja służy do parsowania odpowiedzi AI jako obiektu JSON.
 def _parse_json_object(content: str) -> dict[str, Any] | None:
     content = content.strip()
     if content.startswith("```"):

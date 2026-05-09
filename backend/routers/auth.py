@@ -7,6 +7,7 @@ from schemas import UserCreate, UserLogin, TokenOut, UserOut
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
+# Funkcja służy do rejestrowania użytkownika i zwracania tokenu dostępu.
 @router.post("/register", response_model=TokenOut)
 def register(data: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.email == data.email).first()
@@ -31,6 +32,7 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
     )
 
 
+# Funkcja służy do logowania użytkownika i wydawania tokenu dostępu.
 @router.post("/login", response_model=TokenOut)
 def login(data: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == data.email).first()
@@ -44,6 +46,7 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
     )
 
 
+# Funkcja służy do zwracania danych aktualnie zalogowanego użytkownika.
 @router.get("/me", response_model=UserOut)
 def me(current_user: User = Depends(require_auth)):
     return UserOut.model_validate(current_user)

@@ -224,6 +224,7 @@ DEMO_PROJECTS = [
 ]
 
 
+# Funkcja służy do wypełniania pustej bazy przykładowymi użytkownikami i projektami.
 def seed():
     db = SessionLocal()
     try:

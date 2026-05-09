@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createProject } from '../services/api';
 import toast from 'react-hot-toast';
 
+// Funkcja służy do renderowania formularza dodawania nowego projektu.
 export default function AddProject() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -12,11 +13,13 @@ export default function AddProject() {
     title: '', description: '', role: '', repo_url: '',
   });
 
+  // Funkcja służy do aktualizowania wybranego pola formularza projektu.
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
 
   const repoValid = form.repo_url.trim().length > 0;
 
+  // Funkcja służy do wysyłania formularza tworzenia projektu do API.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!repoValid) { setError('Musisz podać link do repozytorium.'); return; }

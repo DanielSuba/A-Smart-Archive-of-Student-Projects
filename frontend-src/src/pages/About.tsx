@@ -1,5 +1,6 @@
 const UWB_IMAGE_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXh6XCFOXCVjhd8WxCUnhZ3wF8BrNdO9UbDw&s';
 
+// Funkcja służy do renderowania strony informacyjnej o projekcie.
 export default function About() {
   return (
     <div className="about-page">

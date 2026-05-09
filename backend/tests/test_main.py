@@ -18,6 +18,7 @@ TestSession = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 from database import Base, get_db
 Base.metadata.create_all(bind=test_engine)
 
+# Funkcja służy do podmieniania sesji bazy danych na testową.
 def override_get_db():
     db = TestSession()
     try:
@@ -31,12 +32,14 @@ app.dependency_overrides[get_db] = override_get_db
 from fastapi.testclient import TestClient
 
 
+# Funkcja służy do tworzenia klienta testowego aplikacji.
 @pytest.fixture(scope="module")
 def client():
     with TestClient(app, raise_server_exceptions=True) as c:
         yield c
 
 
+# Funkcja służy do przygotowania nagłówków autoryzacji dla testów.
 @pytest.fixture(scope="module")
 def auth_headers(client):
     client.post("/api/auth/register", json={
@@ -49,6 +52,7 @@ def auth_headers(client):
     return {"Authorization": f"Bearer {token}"}
 
 
+# Funkcja służy do testowania zapisu projektu z krótkim opisem.
 def test_short_description_saves_successfully(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Test projekt", "description": "Jeden zdanie.",
@@ -58,6 +62,7 @@ def test_short_description_saves_successfully(client, auth_headers):
     assert resp.status_code == 200
 
 
+# Funkcja służy do testowania blokady zapisu bez repozytorium.
 def test_missing_repo_blocks_save(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Projekt bez źródła",
@@ -67,6 +72,7 @@ def test_missing_repo_blocks_save(client, auth_headers):
     assert resp.status_code == 400
 
 
+# Funkcja służy do testowania poprawnego zapisu projektu.
 def test_valid_project_saves_successfully(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Poprawny projekt testowy",
@@ -78,6 +84,7 @@ def test_valid_project_saves_successfully(client, auth_headers):
     assert resp.json()["difficulty_score"] >= 0
 
 
+# Funkcja służy do testowania wykrywania technologii z tekstu.
 def test_technology_extractor_detects_correctly():
     from services.tech_extractor import extract_from_text
     result = extract_from_text("React frontend Docker containerization FastAPI backend PostgreSQL database.")
@@ -86,6 +93,7 @@ def test_technology_extractor_detects_correctly():
         assert 0 <= t["confidence"] <= 100
 
 
+# Funkcja służy do testowania zmiany oceny trudności zależnie od parametrów.
 def test_difficulty_scoring_changes_with_params():
     from services.difficulty_scorer import calculate_difficulty
     simple = calculate_difficulty([], "Prosty projekt.", False, None)
@@ -97,6 +105,7 @@ def test_difficulty_scoring_changes_with_params():
     assert complex_r["score"] > simple["score"]
 
 
+# Funkcja służy do testowania aktualizacji profilu kompetencji po dodaniu projektu.
 def test_skill_profile_updates_after_project(client, auth_headers):
     client.post("/api/projects", data={
         "title": "Projekt Spring Boot",
@@ -109,6 +118,7 @@ def test_skill_profile_updates_after_project(client, auth_headers):
     assert resp.json()["total_projects"] >= 1
 
 
+# Funkcja służy do testowania tworzenia portfolio.
 def test_portfolio_generator_creates_portfolio(client, auth_headers):
     p_resp = client.get("/api/projects/my", headers=auth_headers)
     projects = p_resp.json()["items"]
@@ -122,21 +132,25 @@ def test_portfolio_generator_creates_portfolio(client, auth_headers):
     assert "public_slug" in resp.json()
 
 
+# Funkcja służy do testowania limitu liczby projektów na stronie.
 def test_pagination_returns_max_10(client):
     resp = client.get("/api/projects?page=1&per_page=10")
     assert resp.status_code == 200
     assert len(resp.json()["items"]) <= 10
 
 
+# Funkcja służy do testowania dostępności endpointu zdrowia aplikacji.
 def test_health_endpoint_available(client):
     assert client.get("/api/health").json()["status"] == "ok"
 
 
+# Funkcja służy do testowania wymagania autoryzacji JWT.
 def test_auth_jwt_required(client):
     assert client.get("/api/profile").status_code == 401
     assert client.get("/api/projects/my").status_code == 401
 
 
+# Funkcja służy do testowania wykrywania technologii z package.json.
 def test_extract_from_package_json():
     from services.tech_extractor import extract_from_package_json
     pkg = '{"dependencies": {"react": "^18.0.0", "typescript": "^5.0.0"}}'
@@ -144,6 +158,7 @@ def test_extract_from_package_json():
     assert any(n in names for n in ["React", "TypeScript"])
 
 
+# Funkcja służy do testowania parsowania linków GitHub.
 def test_github_url_parsing():
     from services.tech_extractor import parse_github_url
     assert parse_github_url("https://github.com/microsoft/vscode") == ("microsoft", "vscode")

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
+// Funkcja służy do renderowania formularza rejestracji użytkownika.
 export default function Register() {
   const [form, setForm] = useState({ email: '', name: '', password: '', confirm: '' });
   const [loading, setLoading] = useState(false);
@@ -10,6 +11,7 @@ export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  // Funkcja służy do wysyłania danych rejestracji do API.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.password !== form.confirm) { setError('Hasła nie są zgodne'); return; }
@@ -26,6 +28,7 @@ export default function Register() {
     }
   };
 
+  // Funkcja służy do aktualizowania wybranego pola formularza rejestracji.
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, [k]: e.target.value }));
 
   return (

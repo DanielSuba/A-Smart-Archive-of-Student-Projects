@@ -5,6 +5,7 @@ import type { Project } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
+// Funkcja służy do renderowania etykiety poziomu trudności projektu.
 function DiffBadge({ level }: { level: string }) {
   const cls: Record<string, string> = {
     'Początkujący': 'badge-beginner', 'Średni': 'badge-intermediate',
@@ -13,6 +14,7 @@ function DiffBadge({ level }: { level: string }) {
   return <span className={`badge ${cls[level] || 'badge-beginner'}`}>{level}</span>;
 }
 
+// Funkcja służy do renderowania paska pewności wykrycia technologii.
 function ConfBar({ confidence }: { confidence: number }) {
   const cls = confidence >= 70 ? 'conf-high' : confidence >= 40 ? 'conf-med' : 'conf-low';
   return (
@@ -22,15 +24,18 @@ function ConfBar({ confidence }: { confidence: number }) {
   );
 }
 
+// Funkcja służy do formatowania daty lub zwracania informacji o braku danych.
 function formatDate(value: string | null | undefined) {
   return value ? new Date(value).toLocaleDateString('pl') : 'Brak danych';
 }
 
+// Funkcja służy do formatowania liczby plików repozytorium.
 function formatFileCount(value: number | null | undefined) {
   if (value === null || value === undefined) return 'Brak danych';
   return value > 50 ? '50+' : value;
 }
 
+// Funkcja służy do budowania linku pobrania ZIP repozytorium GitHub.
 function githubZipUrl(repoUrl: string | null) {
   if (!repoUrl) return null;
   const match = repoUrl.match(/github\.com[/:]([^/]+)\/([^/\s.]+)/);
@@ -38,11 +43,13 @@ function githubZipUrl(repoUrl: string | null) {
   return `https://api.github.com/repos/${match[1]}/${match[2].replace('.git', '')}/zipball`;
 }
 
+// Funkcja służy do budowania linku pobrania dokumentacji projektu.
 function documentationUrl(path: string | null) {
   if (!path) return null;
   return `/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
 }
 
+// Funkcja służy do formatowania wyniku i uzasadnienia oceny AI.
 function scoreText(item: { score?: number; justification?: string; notes?: string } | undefined) {
   if (!item) return 'Brak danych';
   const score = typeof item.score === 'number' ? `${item.score}/10` : 'Brak oceny';
@@ -50,6 +57,7 @@ function scoreText(item: { score?: number; justification?: string; notes?: strin
   return justification ? `${score} - ${justification}` : score;
 }
 
+// Funkcja służy do przygotowania wierszy tabeli oceny dokumentacji AI.
 function documentationRows(project: Project) {
   if (!project.doc_file_path || project.ai_doc_status === 'no_documentation') {
     return [['Status', 'Brak dokumentacji dla oceniania']];
@@ -76,6 +84,7 @@ function documentationRows(project: Project) {
   ];
 }
 
+// Funkcja służy do renderowania strony szczegółów projektu.
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
@@ -88,6 +97,7 @@ export default function ProjectDetail() {
 
   useEffect(() => { loadProject(); }, [id]);
 
+  // Funkcja służy do pobierania aktualnych danych projektu.
   async function loadProject() {
     setLoading(true);
     try {
@@ -99,6 +109,7 @@ export default function ProjectDetail() {
     finally { setLoading(false); }
   }
 
+  // Funkcja służy do usuwania aktualnie przeglądanego projektu.
   async function handleDelete() {
     if (!confirm('Usunąć projekt?')) return;
     await deleteProject(Number(id));
@@ -106,6 +117,7 @@ export default function ProjectDetail() {
     navigate('/my-projects');
   }
 
+  // Funkcja służy do ponownego uruchamiania analizy projektu.
   async function handleAnalyze() {
     setAnalyzing(true);
     try {
@@ -116,6 +128,7 @@ export default function ProjectDetail() {
     finally { setAnalyzing(false); }
   }
 
+  // Funkcja służy do zapisywania zmian w edytowanym projekcie.
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
     try {

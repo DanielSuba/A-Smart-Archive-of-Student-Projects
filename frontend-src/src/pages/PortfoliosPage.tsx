@@ -3,6 +3,7 @@ import { getMyPortfolios, getMyProjects, createPortfolio, deletePortfolio } from
 import type { Portfolio, Project } from '../types';
 import toast from 'react-hot-toast';
 
+// Funkcja służy do renderowania listy portfolio i generatora nowego portfolio.
 export default function PortfoliosPage() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -15,6 +16,7 @@ export default function PortfoliosPage() {
 
   useEffect(() => { loadAll(); }, []);
 
+  // Funkcja służy do pobierania portfolio i projektów użytkownika.
   async function loadAll() {
     setLoading(true);
     const [pf, pr] = await Promise.all([getMyPortfolios(), getMyProjects({ per_page: 50 })]);
@@ -23,6 +25,7 @@ export default function PortfoliosPage() {
     setLoading(false);
   }
 
+  // Funkcja służy do zaznaczania lub odznaczania projektu w generatorze portfolio.
   function toggleSelect(id: number) {
     setSelected(s => {
       const n = new Set(s);
@@ -31,6 +34,7 @@ export default function PortfoliosPage() {
     });
   }
 
+  // Funkcja służy do tworzenia nowego portfolio z wybranych projektów.
   async function handleCreate() {
     if (selected.size === 0) { toast.error('Wybierz co najmniej jeden projekt'); return; }
     setCreating(true);
@@ -45,6 +49,7 @@ export default function PortfoliosPage() {
     finally { setCreating(false); }
   }
 
+  // Funkcja służy do usuwania wybranego portfolio.
   async function handleDelete(id: number) {
     if (!confirm('Usunąć portfolio?')) return;
     await deletePortfolio(id);
@@ -52,6 +57,7 @@ export default function PortfoliosPage() {
     loadAll();
   }
 
+  // Funkcja służy do budowania publicznego adresu portfolio.
   const portfolioUrl = (slug: string) => `${window.location.origin}/portfolio/${slug}`;
 
   if (loading) return <div className="spinner" />;

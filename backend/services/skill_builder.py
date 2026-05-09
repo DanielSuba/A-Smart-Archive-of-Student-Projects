@@ -38,6 +38,7 @@ ECOSYSTEM_MAP = {
 }
 
 
+# Funkcja służy do budowania profilu kompetencji użytkownika na podstawie jego projektów.
 def build_skill_profile(user_id: int, db: Session) -> Dict:
     """Build comprehensive skill profile for a student."""
     projects = db.query(Project).filter(Project.user_id == user_id).all()
@@ -105,6 +106,7 @@ def build_skill_profile(user_id: int, db: Session) -> Dict:
     }
 
 
+# Funkcja służy do generowania rekomendacji nauki na podstawie znanych technologii.
 def generate_recommendations(top_techs: List[str], known_techs: set) -> List[str]:
     """Suggest next technologies based on current skill set."""
     candidates: Dict[str, int] = {}

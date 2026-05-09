@@ -3,6 +3,7 @@ import { getMyProfile } from '../services/api';
 import type { Profile } from '../types';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
+// Funkcja służy do renderowania profilu kompetencji użytkownika.
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);

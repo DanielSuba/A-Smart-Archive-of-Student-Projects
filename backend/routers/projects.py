@@ -18,6 +18,7 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
+# Funkcja służy do budowania odpowiedzi API dla pojedynczego projektu.
 def _build_project_out(project: Project, db: Session) -> ProjectOut:
     tech_list = []
     for pt in project.technologies:
@@ -55,6 +56,7 @@ def _build_project_out(project: Project, db: Session) -> ProjectOut:
     )
 
 
+# Funkcja służy do zapisywania wykrytych technologii projektu w bazie danych.
 async def _save_technologies(project: Project, extraction: dict, db: Session):
     """Save extracted technologies to DB."""
     db.query(ProjectTechnology).filter(ProjectTechnology.project_id == project.id).delete()
@@ -76,6 +78,7 @@ async def _save_technologies(project: Project, extraction: dict, db: Session):
         db.add(pt)
 
 
+# Funkcja służy do tworzenia projektu oraz uruchamiania jego analizy.
 @router.post("", response_model=ProjectOut)
 async def create_project(
     title: str = Form(...),
@@ -150,6 +153,7 @@ async def create_project(
     return _build_project_out(project, db)
 
 
+# Funkcja służy do pobierania i filtrowania listy projektów.
 @router.get("", response_model=ProjectListOut)
 def list_projects(
     page: int = Query(1, ge=1),
@@ -201,6 +205,7 @@ def list_projects(
     )
 
 
+# Funkcja służy do pobierania projektów aktualnego użytkownika.
 @router.get("/my", response_model=ProjectListOut)
 def my_projects(
     page: int = Query(1, ge=1),
@@ -222,6 +227,7 @@ def my_projects(
     )
 
 
+# Funkcja służy do pobierania szczegółów wybranego projektu.
 @router.get("/{project_id}", response_model=ProjectOut)
 def get_project(project_id: int, db: Session = Depends(get_db)):
     project = db.query(Project).filter(Project.id == project_id).first()
@@ -230,6 +236,7 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
     return _build_project_out(project, db)
 
 
+# Funkcja służy do aktualizowania danych wybranego projektu.
 @router.put("/{project_id}", response_model=ProjectOut)
 async def update_project(
     project_id: int,
@@ -271,6 +278,7 @@ async def update_project(
     return _build_project_out(project, db)
 
 
+# Funkcja służy do usuwania wybranego projektu.
 @router.delete("/{project_id}")
 def delete_project(
     project_id: int,
@@ -289,6 +297,7 @@ def delete_project(
     return {"message": "Projekt usunięty"}
 
 
+# Funkcja służy do ponownego analizowania technologii i dokumentacji projektu.
 @router.post("/{project_id}/analyze", response_model=TechExtractionResult)
 async def analyze_project(
     project_id: int,
@@ -321,6 +330,7 @@ async def analyze_project(
     )
 
 
+# Funkcja służy do konwertowania daty z GitHub API na obiekt datetime.
 def _parse_github_datetime(value: Optional[str]):
     if not value:
         return None
@@ -330,6 +340,7 @@ def _parse_github_datetime(value: Optional[str]):
         return None
 
 
+# Funkcja służy do zapisywania metadanych GitHuba w obiekcie projektu.
 def _apply_github_metadata(project: Project, extraction: dict):
     github_meta = extraction.get("github", {})
     project.github_repo_created_at = _parse_github_datetime(github_meta.get("repo_created_at"))
@@ -340,6 +351,7 @@ def _apply_github_metadata(project: Project, extraction: dict):
         project.year = project.github_last_commit_at.year
 
 
+# Funkcja służy do bezpiecznego parsowania tekstu JSON lub zwracania pustej wartości.
 def _json_or_none(value: Optional[str]):
     if not value:
         return None
@@ -350,6 +362,7 @@ def _json_or_none(value: Optional[str]):
         return None
 
 
+# Funkcja służy do opcjonalnego oceniania dokumentacji projektu przez AI.
 async def _evaluate_project_documentation(project: Project):
     if not project.doc_file_path:
         project.ai_doc_status = "no_documentation"

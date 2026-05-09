@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
+// Funkcja służy do renderowania formularza logowania użytkownika.
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,6 +12,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Funkcja służy do wysyłania danych logowania do API.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); setError('');

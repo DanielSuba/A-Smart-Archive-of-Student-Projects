@@ -15,6 +15,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
+# Funkcja służy do sprawdzania, czy podane hasło pasuje do zapisanego hasha.
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify plain password against bcrypt hash."""
     try:
@@ -26,6 +27,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         return False
 
 
+# Funkcja służy do tworzenia bezpiecznego hasha hasła użytkownika.
 def get_password_hash(password: str) -> str:
     """Hash a password using bcrypt directly (Python 3.13 compatible)."""
     salt = bcrypt.gensalt()
@@ -33,6 +35,7 @@ def get_password_hash(password: str) -> str:
     return hashed.decode("utf-8")
 
 
+# Funkcja służy do generowania tokenu JWT dla zalogowanego użytkownika.
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
@@ -40,6 +43,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
+# Funkcja służy do pobierania aktualnego użytkownika na podstawie tokenu JWT.
 def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
@@ -56,12 +60,14 @@ def get_current_user(
     return db.query(User).filter(User.id == int(user_id)).first()
 
 
+# Funkcja służy do wymagania zalogowanego użytkownika dla chronionych endpointów.
 def require_auth(current_user: Optional[User] = Depends(get_current_user)) -> User:
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wymagane logowanie")
     return current_user
 
 
+# Funkcja służy do sprawdzania, czy aktualny użytkownik ma uprawnienia administratora.
 def require_admin(current_user: User = Depends(require_auth)) -> User:
     from database import UserRole
     if current_user.role != UserRole.ADMIN:

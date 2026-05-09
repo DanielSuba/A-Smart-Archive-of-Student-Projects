@@ -76,6 +76,7 @@ GITHUB_API_LANG_MAP = {
 }
 
 
+# Funkcja służy do odczytywania właściciela i nazwy repozytorium z linku GitHub.
 def parse_github_url(url: str) -> Tuple[str, str] | None:
     """Extract owner and repo from GitHub URL."""
     patterns = [
@@ -90,6 +91,7 @@ def parse_github_url(url: str) -> Tuple[str, str] | None:
     return None
 
 
+# Funkcja służy do pobierania technologii i metadanych projektu z GitHub API.
 async def extract_from_github(repo_url: str) -> Dict:
     """Call GitHub API to get language statistics."""
     parsed = parse_github_url(repo_url)
@@ -198,6 +200,7 @@ async def extract_from_github(repo_url: str) -> Dict:
     return {"technologies": technologies, "source": "github_api", "has_cicd": has_cicd, "github": github}
 
 
+# Funkcja służy do wykrywania technologii na podstawie tekstu.
 def extract_from_text(text: str) -> Dict:
     """Scan text for technology keywords and compute confidence."""
     text_lower = text.lower()
@@ -225,6 +228,7 @@ def extract_from_text(text: str) -> Dict:
     return {"technologies": found[:15], "source": "text_analysis", "has_cicd": has_cicd}
 
 
+# Funkcja służy do wykrywania technologii na podstawie zawartości pliku package.json.
 def extract_from_package_json(content: str) -> Dict:
     """Parse package.json for framework detection."""
     try:
@@ -250,10 +254,12 @@ def extract_from_package_json(content: str) -> Dict:
         return {"technologies": [], "source": "package_json_error", "has_cicd": False}
 
 
+# Funkcja służy do zwracania kategorii dla podanej technologii.
 def get_category(tech_name: str) -> str:
     return TECH_KEYWORDS.get(tech_name, {}).get("category", "Other")
 
 
+# Funkcja służy do wybierania najlepszego sposobu wykrywania technologii projektu.
 async def extract_technologies(
     repo_url: str | None = None,
     file_content: str | None = None,

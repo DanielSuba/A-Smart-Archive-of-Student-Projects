@@ -8,6 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# Funkcja służy do uruchamiania zadań startowych aplikacji i inicjalizacji bazy.
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: init DB and auto-seed demo data if empty."""
@@ -68,6 +69,7 @@ os.makedirs(_UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=_UPLOAD_DIR), name="uploads")
 
 
+# Funkcja służy do zwracania statusu działania API.
 @app.get("/api/health")
 def health():
     return {"status": "ok", "service": "Archiwum Projektów"}

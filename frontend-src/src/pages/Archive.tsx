@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 
 const DIFFICULTIES = ['', 'Początkujący', 'Średni', 'Zaawansowany', 'Ekspert'];
 
+// Funkcja służy do renderowania globalnego archiwum projektów z filtrami.
 export default function Archive() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [total, setTotal] = useState(0);
@@ -27,6 +28,7 @@ export default function Archive() {
 
   useEffect(() => { load(page); }, [page]);
 
+  // Funkcja służy do pobierania projektów dla wybranej strony i filtrów.
   async function load(p: number) {
     setLoading(true);
     try {
@@ -41,12 +43,14 @@ export default function Archive() {
     } finally { setLoading(false); }
   }
 
+  // Funkcja służy do usuwania projektu z archiwum.
   async function handleDelete(id: number) {
     if (!confirm('Usunąć projekt?')) return;
     try { await deleteProject(id); toast.success('Projekt usunięty'); load(page); }
     catch { toast.error('Błąd usuwania'); }
   }
 
+  // Funkcja służy do zatwierdzania tekstu wyszukiwania.
   const handleSearch = (e: React.FormEvent) => { e.preventDefault(); setSearch(searchInput); };
 
   return (

@@ -34,6 +34,7 @@ INTERMEDIATE_TECH = {
 }
 
 
+# Funkcja służy do obliczania poziomu trudności projektu na podstawie technologii i opisu.
 def calculate_difficulty(
     technologies: List[Dict],
     description: str,

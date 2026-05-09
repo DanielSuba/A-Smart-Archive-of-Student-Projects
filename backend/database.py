@@ -110,6 +110,7 @@ class PortfolioProject(Base):
     project = relationship("Project", back_populates="portfolio_items")
 
 
+# Funkcja służy do udostępniania sesji bazy danych dla requestów FastAPI.
 def get_db():
     db = SessionLocal()
     try:
@@ -118,11 +119,13 @@ def get_db():
         db.close()
 
 
+# Funkcja służy do inicjalizacji tabel i brakujących kolumn w bazie danych.
 def init_db():
     Base.metadata.create_all(bind=engine)
     _ensure_project_columns()
 
 
+# Funkcja służy do dodawania brakujących kolumn projektu w istniejącej bazie.
 def _ensure_project_columns():
     inspector = inspect(engine)
     if "projects" not in inspector.get_table_names():

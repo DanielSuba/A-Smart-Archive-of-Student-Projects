@@ -12,6 +12,7 @@ profile_router = APIRouter(prefix="/api/profile", tags=["profile"])
 portfolio_router = APIRouter(prefix="/api/portfolios", tags=["portfolios"])
 
 
+# Funkcja służy do zwracania profilu kompetencji aktualnego użytkownika.
 @profile_router.get("", response_model=SkillProfileOut)
 def get_my_profile(
     db: Session = Depends(get_db),
@@ -24,6 +25,7 @@ def get_my_profile(
     )
 
 
+# Funkcja służy do zwracania profilu kompetencji wybranego użytkownika.
 @profile_router.get("/{user_id}", response_model=SkillProfileOut)
 def get_user_profile(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -36,6 +38,7 @@ def get_user_profile(user_id: int, db: Session = Depends(get_db)):
     )
 
 
+# Funkcja służy do tworzenia portfolio z wybranych projektów.
 @portfolio_router.post("", response_model=PortfolioOut)
 def create_portfolio(
     data: PortfolioCreate,
@@ -67,6 +70,7 @@ def create_portfolio(
     return _portfolio_out(portfolio, db)
 
 
+# Funkcja służy do pobierania portfolio aktualnego użytkownika.
 @portfolio_router.get("/my", response_model=list)
 def my_portfolios(
     db: Session = Depends(get_db),
@@ -76,6 +80,7 @@ def my_portfolios(
     return [_portfolio_out(p, db) for p in portfolios]
 
 
+# Funkcja służy do pobierania publicznego portfolio po slugu.
 @portfolio_router.get("/{slug}", response_model=PortfolioOut)
 def get_portfolio(slug: str, db: Session = Depends(get_db)):
     portfolio = db.query(Portfolio).filter(Portfolio.public_slug == slug).first()
@@ -84,6 +89,7 @@ def get_portfolio(slug: str, db: Session = Depends(get_db)):
     return _portfolio_out(portfolio, db)
 
 
+# Funkcja służy do usuwania portfolio użytkownika.
 @portfolio_router.delete("/{portfolio_id}")
 def delete_portfolio(
     portfolio_id: int,
@@ -100,6 +106,7 @@ def delete_portfolio(
     return {"message": "Portfolio usunięte"}
 
 
+# Funkcja służy do składania danych portfolio do odpowiedzi API.
 def _portfolio_out(portfolio: Portfolio, db: Session) -> dict:
     from routers.projects import _build_project_out
     items = []

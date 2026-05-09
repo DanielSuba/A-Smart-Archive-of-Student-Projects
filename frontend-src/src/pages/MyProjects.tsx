@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 
 const CACHE_KEY = 'cached_my_projects';
 
+// Funkcja służy do renderowania listy projektów aktualnego użytkownika.
 export default function MyProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [total, setTotal] = useState(0);
@@ -16,7 +17,9 @@ export default function MyProjects() {
   const [offline, setOffline] = useState(!navigator.onLine);
 
   useEffect(() => {
+    // Funkcja służy do ustawiania trybu online po odzyskaniu połączenia.
     const onOnline = () => setOffline(false);
+    // Funkcja służy do ustawiania trybu offline po utracie połączenia.
     const onOffline = () => setOffline(true);
     window.addEventListener('online', onOnline);
     window.addEventListener('offline', onOffline);
@@ -25,6 +28,7 @@ export default function MyProjects() {
 
   useEffect(() => { load(page); }, [page]);
 
+  // Funkcja służy do pobierania projektów użytkownika lub wersji zapisanej offline.
   async function load(p: number) {
     setLoading(true);
     if (!navigator.onLine) {
@@ -47,6 +51,7 @@ export default function MyProjects() {
     }
   }
 
+  // Funkcja służy do usuwania projektu użytkownika.
   async function handleDelete(id: number) {
     if (!confirm('Czy na pewno chcesz usunąć ten projekt?')) return;
     try {
