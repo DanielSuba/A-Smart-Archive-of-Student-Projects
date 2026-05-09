@@ -71,7 +71,7 @@ export default function ProfilePage() {
         </div>
         {editingContacts ? (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-            {(['facebook', 'discord', 'github', 'linkedin'] as const).map(k => (
+            {(['linkedin', 'github', 'facebook', 'discord'] as const).map(k => (
               <div key={k} className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" style={{ textTransform: 'capitalize' }}>{k}</label>
                 <input className="form-input" value={contacts[k]}
@@ -85,20 +85,21 @@ export default function ProfilePage() {
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.88rem' }}>
-            {(['facebook', 'discord', 'github', 'linkedin'] as const).map(k => {
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem 1.5rem', fontSize: '0.88rem' }}>
+            {(['linkedin', 'github', 'facebook', 'discord'] as const).map(k => {
               const v = profile.user[k];
-              if (!v) return null;
-              const isUrl = v.startsWith('http://') || v.startsWith('https://');
+              const isUrl = !!v && (v.startsWith('http://') || v.startsWith('https://'));
               return (
                 <div key={k}>
                   <span style={{ color: 'var(--text2)', textTransform: 'capitalize' }}>{k}: </span>
-                  {isUrl ? <a href={v} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>{v}</a> : <span>{v}</span>}
+                  {v ? (
+                    isUrl ? <a href={v} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>{v}</a> : <span>{v}</span>
+                  ) : <span style={{ color: 'var(--text2)' }}>—</span>}
                 </div>
               );
             })}
             {!profile.user.facebook && !profile.user.discord && !profile.user.github && !profile.user.linkedin && (
-              <span style={{ color: 'var(--text2)' }}>{t.profile.contactsEmpty}</span>
+              <span style={{ color: 'var(--text2)', gridColumn: '1 / -1' }}>{t.profile.contactsEmpty}</span>
             )}
           </div>
         )}
