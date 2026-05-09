@@ -40,6 +40,7 @@ def _build_project_out(project: Project, db: Session) -> ProjectOut:
         difficulty_score=project.difficulty_score,
         difficulty_level=project.difficulty_level,
         has_cicd=project.has_cicd,
+        github_repo_created_at=project.github_repo_created_at,
         github_last_commit_at=project.github_last_commit_at,
         github_stars=project.github_stars,
         github_file_count=project.github_file_count,
@@ -116,6 +117,7 @@ async def create_project(
     )
 
     github_meta = extraction.get("github", {})
+    repo_created_at = _parse_github_datetime(github_meta.get("repo_created_at"))
     last_commit_at = _parse_github_datetime(github_meta.get("last_commit_at"))
 
     # Create project record
@@ -127,6 +129,7 @@ async def create_project(
         role=role,
         repo_url=repo_url,
         doc_file_path=file_path,
+        github_repo_created_at=repo_created_at,
         github_last_commit_at=last_commit_at,
         github_stars=github_meta.get("stars"),
         github_file_count=github_meta.get("file_count"),
@@ -330,6 +333,7 @@ def _parse_github_datetime(value: Optional[str]):
 
 def _apply_github_metadata(project: Project, extraction: dict):
     github_meta = extraction.get("github", {})
+    project.github_repo_created_at = _parse_github_datetime(github_meta.get("repo_created_at"))
     project.github_last_commit_at = _parse_github_datetime(github_meta.get("last_commit_at"))
     project.github_stars = github_meta.get("stars")
     project.github_file_count = github_meta.get("file_count")

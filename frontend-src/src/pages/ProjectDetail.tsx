@@ -31,6 +31,18 @@ function formatFileCount(value: number | null | undefined) {
   return value > 50 ? '50+' : value;
 }
 
+function githubZipUrl(repoUrl: string | null) {
+  if (!repoUrl) return null;
+  const match = repoUrl.match(/github\.com[/:]([^/]+)\/([^/\s.]+)/);
+  if (!match) return null;
+  return `https://api.github.com/repos/${match[1]}/${match[2].replace('.git', '')}/zipball`;
+}
+
+function documentationUrl(path: string | null) {
+  if (!path) return null;
+  return `/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+}
+
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
@@ -85,6 +97,8 @@ export default function ProjectDetail() {
   if (!project) return null;
 
   const canEdit = user?.id === project.user_id || isAdmin;
+  const zipUrl = githubZipUrl(project.repo_url);
+  const docUrl = documentationUrl(project.doc_file_path);
 
   return (
     <div>
@@ -186,6 +200,7 @@ export default function ProjectDetail() {
                 ['CI/CD', project.has_cicd ? 'Tak' : 'Nie'],
                 ['Dokumentacja', project.doc_file_path ? 'Tak (PDF)' : 'Nie'],
                 ['Dodano', new Date(project.created_at).toLocaleDateString('pl')],
+                ['Stworzono reposytorium', formatDate(project.github_repo_created_at)],
                 ['Ostatnia aktywność', formatDate(project.github_last_commit_at)],
                 ['Liczba gwiazdek', project.github_stars ?? 'Brak danych'],
                 ['Liczba plików', formatFileCount(project.github_file_count)],
@@ -193,6 +208,23 @@ export default function ProjectDetail() {
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--border)', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text2)' }}>{label}</span>
                   <span style={{ fontWeight: 500 }}>{val}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="card" style={{ marginTop: '1rem' }}>
+              <div className="section-title">Pobranie plików</div>
+              {[
+                ['Pobrać ZIP projektu', zipUrl, 'Pobierz ZIP'],
+                ['Pobrać dokumentację', docUrl, 'Pobierz dokumentację'],
+              ].map(([label, url, button]) => (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', padding: '0.45rem 0', borderBottom: '1px solid var(--border)', fontSize: '0.85rem' }}>
+                  <span style={{ color: 'var(--text2)' }}>{label}</span>
+                  {url ? (
+                    <a className="btn btn-secondary btn-sm" href={url} download target="_blank" rel="noreferrer">{button}</a>
+                  ) : (
+                    <button className="btn btn-secondary btn-sm" disabled>Brak pliku</button>
+                  )}
                 </div>
               ))}
             </div>

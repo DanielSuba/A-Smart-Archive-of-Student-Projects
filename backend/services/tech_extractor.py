@@ -100,6 +100,7 @@ async def extract_from_github(repo_url: str) -> Dict:
     technologies = []
     has_cicd = False
     github = {
+        "repo_created_at": None,
         "last_commit_at": None,
         "stars": None,
         "file_count": None,
@@ -149,6 +150,7 @@ async def extract_from_github(repo_url: str) -> Dict:
             if resp.status_code == 200:
                 repo_data = resp.json()
                 github["stars"] = repo_data.get("stargazers_count")
+                github["repo_created_at"] = repo_data.get("created_at")
                 default_branch = repo_data.get("default_branch") or default_branch
                 topics = repo_data.get("topics", [])
                 for topic in topics:

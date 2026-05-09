@@ -94,6 +94,7 @@ class ProjectOut(BaseModel):
     difficulty_score: float
     difficulty_level: str
     has_cicd: bool
+    github_repo_created_at: Optional[datetime] = None
     github_last_commit_at: Optional[datetime] = None
     github_stars: Optional[int] = None
     github_file_count: Optional[int] = None
