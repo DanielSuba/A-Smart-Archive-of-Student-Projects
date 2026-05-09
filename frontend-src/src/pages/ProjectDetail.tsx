@@ -22,13 +22,22 @@ function ConfBar({ confidence }: { confidence: number }) {
   );
 }
 
+function formatDate(value: string | null | undefined) {
+  return value ? new Date(value).toLocaleDateString('pl') : 'Brak danych';
+}
+
+function formatFileCount(value: number | null | undefined) {
+  if (value === null || value === undefined) return 'Brak danych';
+  return value > 50 ? '50+' : value;
+}
+
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ title: '', description: '', year: '', role: '', repo_url: '' });
+  const [editForm, setEditForm] = useState({ title: '', description: '', role: '', repo_url: '' });
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
 
@@ -40,7 +49,7 @@ export default function ProjectDetail() {
       const res = await getProject(Number(id));
       setProject(res.data);
       const p = res.data;
-      setEditForm({ title: p.title, description: p.description, year: String(p.year), role: p.role, repo_url: p.repo_url || '' });
+      setEditForm({ title: p.title, description: p.description, role: p.role, repo_url: p.repo_url || '' });
     } catch { navigate('/my-projects'); }
     finally { setLoading(false); }
   }
@@ -65,7 +74,7 @@ export default function ProjectDetail() {
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await updateProject(Number(id), { ...editForm, year: parseInt(editForm.year) });
+      await updateProject(Number(id), editForm);
       toast.success('Projekt zaktualizowany');
       setEditing(false);
       loadProject();
@@ -97,17 +106,10 @@ export default function ProjectDetail() {
               <textarea className="form-textarea" value={editForm.description}
                 onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} rows={5} required />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <div className="form-group">
-                <label className="form-label">Rok</label>
-                <input className="form-input" type="number" value={editForm.year}
-                  onChange={e => setEditForm(f => ({ ...f, year: e.target.value }))} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Rola</label>
-                <input className="form-input" value={editForm.role}
-                  onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))} />
-              </div>
+            <div className="form-group">
+              <label className="form-label">Rola</label>
+              <input className="form-input" value={editForm.role}
+                onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))} />
             </div>
             <div className="form-group">
               <label className="form-label">Repozytorium</label>
@@ -129,7 +131,7 @@ export default function ProjectDetail() {
                 <DiffBadge level={project.difficulty_level} />
               </div>
               <div className="project-meta" style={{ fontSize: '0.875rem', marginBottom: '0.75rem' }}>
-                <strong>{project.year}</strong> · {project.role}
+                <strong>{project.role}</strong>
                 {project.owner && <> · <span style={{ color: 'var(--accent)' }}>{project.owner.name}</span></>}
                 {project.has_cicd && <span className="badge badge-cicd" style={{ marginLeft: '0.5rem' }}>CI/CD</span>}
               </div>
@@ -179,12 +181,14 @@ export default function ProjectDetail() {
             <div className="card">
               <div className="section-title">Informacje</div>
               {[
-                ['Rok', project.year],
                 ['Rola', project.role],
                 ['Technologii', project.technologies.length],
                 ['CI/CD', project.has_cicd ? 'Tak' : 'Nie'],
                 ['Dokumentacja', project.doc_file_path ? 'Tak (PDF)' : 'Nie'],
                 ['Dodano', new Date(project.created_at).toLocaleDateString('pl')],
+                ['Ostatnia aktywność', formatDate(project.github_last_commit_at)],
+                ['Liczba gwiazdek', project.github_stars ?? 'Brak danych'],
+                ['Liczba plików', formatFileCount(project.github_file_count)],
               ].map(([label, val]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--border)', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text2)' }}>{label}</span>

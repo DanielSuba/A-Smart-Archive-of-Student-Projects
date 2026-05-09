@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, 
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, and_
 from typing import Optional, List
+from datetime import datetime
 import os, shutil, uuid, math
 
 from database import get_db, User, Project, Technology, ProjectTechnology, UserRole
@@ -39,6 +40,9 @@ def _build_project_out(project: Project, db: Session) -> ProjectOut:
         difficulty_score=project.difficulty_score,
         difficulty_level=project.difficulty_level,
         has_cicd=project.has_cicd,
+        github_last_commit_at=project.github_last_commit_at,
+        github_stars=project.github_stars,
+        github_file_count=project.github_file_count,
         created_at=project.created_at,
         updated_at=project.updated_at,
         owner=project.owner,
@@ -71,7 +75,7 @@ async def _save_technologies(project: Project, extraction: dict, db: Session):
 async def create_project(
     title: str = Form(...),
     description: str = Form(...),
-    year: int = Form(...),
+    year: Optional[int] = Form(None),
     role: str = Form(...),
     repo_url: Optional[str] = Form(None),
     file: Optional[UploadFile] = File(None),
@@ -103,19 +107,6 @@ async def create_project(
                 file_content = f.read()
             file_type = "package.json"
 
-    # Create project record
-    project = Project(
-        user_id=current_user.id,
-        title=title,
-        description=description,
-        year=year,
-        role=role,
-        repo_url=repo_url,
-        doc_file_path=file_path,
-    )
-    db.add(project)
-    db.flush()
-
     # Extract technologies
     extraction = await extract_technologies(
         repo_url=repo_url,
@@ -123,6 +114,25 @@ async def create_project(
         file_type=file_type,
         description=description,
     )
+
+    github_meta = extraction.get("github", {})
+    last_commit_at = _parse_github_datetime(github_meta.get("last_commit_at"))
+
+    # Create project record
+    project = Project(
+        user_id=current_user.id,
+        title=title,
+        description=description,
+        year=year or (last_commit_at.year if last_commit_at else datetime.utcnow().year),
+        role=role,
+        repo_url=repo_url,
+        doc_file_path=file_path,
+        github_last_commit_at=last_commit_at,
+        github_stars=github_meta.get("stars"),
+        github_file_count=github_meta.get("file_count"),
+    )
+    db.add(project)
+    db.flush()
 
     # Save technologies
     await _save_technologies(project, extraction, db)
@@ -253,6 +263,7 @@ async def update_project(
         project.difficulty_score = diff["score"]
         project.difficulty_level = diff["level"]
         project.has_cicd = extraction.get("has_cicd", False)
+        _apply_github_metadata(project, extraction)
 
     db.commit()
     db.refresh(project)
@@ -298,6 +309,7 @@ async def analyze_project(
     project.difficulty_score = diff["score"]
     project.difficulty_level = diff["level"]
     project.has_cicd = extraction.get("has_cicd", False)
+    _apply_github_metadata(project, extraction)
 
     db.commit()
     return TechExtractionResult(
@@ -305,3 +317,21 @@ async def analyze_project(
         source=extraction.get("source", "unknown"),
         has_cicd=extraction.get("has_cicd", False),
     )
+
+
+def _parse_github_datetime(value: Optional[str]):
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(tzinfo=None)
+    except ValueError:
+        return None
+
+
+def _apply_github_metadata(project: Project, extraction: dict):
+    github_meta = extraction.get("github", {})
+    project.github_last_commit_at = _parse_github_datetime(github_meta.get("last_commit_at"))
+    project.github_stars = github_meta.get("stars")
+    project.github_file_count = github_meta.get("file_count")
+    if project.github_last_commit_at:
+        project.year = project.github_last_commit_at.year

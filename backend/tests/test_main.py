@@ -52,7 +52,7 @@ def auth_headers(client):
 def test_missing_description_blocks_save(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Test projekt", "description": "Jeden zdanie.",
-        "year": "2024", "role": "Developer",
+        "role": "Developer",
         "repo_url": "https://github.com/test/repo",
     }, headers=auth_headers)
     assert resp.status_code == 400
@@ -62,7 +62,7 @@ def test_missing_source_blocks_save(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Projekt bez źródła",
         "description": "Pierwsze zdanie jest tutaj. Drugie zdanie opisuje projekt. Trzecie zdanie to koniec.",
-        "year": "2024", "role": "Developer",
+        "role": "Developer",
     }, headers=auth_headers)
     assert resp.status_code == 400
 
@@ -71,7 +71,7 @@ def test_valid_project_saves_successfully(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Poprawny projekt testowy",
         "description": "Pierwsza część opisu projektu. Projekt realizuje ważne cele edukacyjne. Backend oparty jest na FastAPI z bazą PostgreSQL.",
-        "year": "2024", "role": "Fullstack Developer",
+        "role": "Fullstack Developer",
         "repo_url": "https://github.com/test/valid",
     }, headers=auth_headers)
     assert resp.status_code == 200
@@ -101,7 +101,7 @@ def test_skill_profile_updates_after_project(client, auth_headers):
     client.post("/api/projects", data={
         "title": "Projekt Spring Boot",
         "description": "Aplikacja enterprise w Java. Architektura MVC z testami JUnit. Wdrożenie na serwerze.",
-        "year": "2023", "role": "Backend Developer",
+        "role": "Backend Developer",
         "repo_url": "https://github.com/test/java",
     }, headers=auth_headers)
     resp = client.get("/api/profile", headers=auth_headers)

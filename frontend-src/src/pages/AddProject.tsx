@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { createProject } from '../services/api';
 import toast from 'react-hot-toast';
 
-const CURRENT_YEAR = new Date().getFullYear();
-const YEARS = Array.from({ length: 10 }, (_, i) => CURRENT_YEAR - i);
-
 function countSentences(text: string): number {
   return text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 2).length;
 }
@@ -16,8 +13,7 @@ export default function AddProject() {
   const [error, setError] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [form, setForm] = useState({
-    title: '', description: '', year: String(CURRENT_YEAR),
-    role: '', repo_url: '',
+    title: '', description: '', role: '', repo_url: '',
   });
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -77,18 +73,10 @@ export default function AddProject() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div className="form-group">
-              <label className="form-label">Rok <span>*</span></label>
-              <select className="form-select" value={form.year} onChange={set('year')}>
-                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-              </select>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Rola w projekcie <span>*</span></label>
-              <input className="form-input" value={form.role} onChange={set('role')} required
-                placeholder="np. Fullstack Developer" />
-            </div>
+          <div className="form-group">
+            <label className="form-label">Rola w projekcie <span>*</span></label>
+            <input className="form-input" value={form.role} onChange={set('role')} required
+              placeholder="np. Fullstack Developer" />
           </div>
 
           <div className="section-title" style={{ marginTop: '0.5rem' }}>Źródło projektu <span style={{ color: 'var(--accent3)' }}>*</span></div>

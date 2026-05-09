@@ -34,7 +34,7 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
       </div>
 
       <div className="project-meta">
-        {project.year} · {project.role}
+        {project.role}
         {showOwner && project.owner && <> · <span style={{ color: 'var(--accent)' }}>{project.owner.name}</span></>}
         {project.has_cicd && <> · <span className="badge badge-cicd">CI/CD</span></>}
         <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--text2)' }}>

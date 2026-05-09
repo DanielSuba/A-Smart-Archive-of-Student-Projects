@@ -26,6 +26,9 @@ export interface Project {
   difficulty_score: number;
   difficulty_level: string;
   has_cicd: boolean;
+  github_last_commit_at: string | null;
+  github_stars: number | null;
+  github_file_count: number | null;
   created_at: string;
   updated_at: string;
   owner: User;

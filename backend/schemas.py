@@ -45,7 +45,7 @@ class TechnologyOut(BaseModel):
 class ProjectCreate(BaseModel):
     title: str
     description: str
-    year: int
+    year: Optional[int] = None
     role: str
     repo_url: Optional[str] = None
 
@@ -94,6 +94,9 @@ class ProjectOut(BaseModel):
     difficulty_score: float
     difficulty_level: str
     has_cicd: bool
+    github_last_commit_at: Optional[datetime] = None
+    github_stars: Optional[int] = None
+    github_file_count: Optional[int] = None
     created_at: datetime
     updated_at: datetime
     owner: Optional[UserOut]

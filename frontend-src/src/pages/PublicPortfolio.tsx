@@ -64,7 +64,7 @@ export default function PublicPortfolio() {
                       <span style={{ color: 'var(--text2)', fontSize: '0.8rem' }}>#{idx + 1}</span>
                       <h2 style={{ fontFamily: 'inherit', fontSize: '1.2rem' }}>{p.title}</h2>
                     </div>
-                    <div style={{ color: 'var(--text2)', fontSize: '0.83rem' }}>{p.year} · {p.role}</div>
+                    <div style={{ color: 'var(--text2)', fontSize: '0.83rem' }}>{p.role}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     {diffBadge(p.difficulty_level)}

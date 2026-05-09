@@ -94,11 +94,17 @@ async def extract_from_github(repo_url: str) -> Dict:
     """Call GitHub API to get language statistics."""
     parsed = parse_github_url(repo_url)
     if not parsed:
-        return {"technologies": [], "source": "github_parse_error", "has_cicd": False}
+        return {"technologies": [], "source": "github_parse_error", "has_cicd": False, "github": {}}
 
     owner, repo = parsed
     technologies = []
     has_cicd = False
+    github = {
+        "last_commit_at": None,
+        "stars": None,
+        "file_count": None,
+    }
+    default_branch = "main"
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         # Get language bytes
@@ -142,6 +148,8 @@ async def extract_from_github(repo_url: str) -> Dict:
             )
             if resp.status_code == 200:
                 repo_data = resp.json()
+                github["stars"] = repo_data.get("stargazers_count")
+                default_branch = repo_data.get("default_branch") or default_branch
                 topics = repo_data.get("topics", [])
                 for topic in topics:
                     for tech_name, tech_info in TECH_KEYWORDS.items():
@@ -156,8 +164,36 @@ async def extract_from_github(repo_url: str) -> Dict:
         except Exception:
             pass
 
+        # Last commit date
+        try:
+            resp = await client.get(
+                f"https://api.github.com/repos/{owner}/{repo}/commits",
+                params={"per_page": 1},
+                headers={"Accept": "application/vnd.github+json"}
+            )
+            if resp.status_code == 200:
+                commits = resp.json()
+                if commits:
+                    github["last_commit_at"] = commits[0].get("commit", {}).get("committer", {}).get("date")
+        except Exception:
+            pass
+
+        # Repository file count. Store exact count up to 50 and 51 as "50+" marker.
+        try:
+            resp = await client.get(
+                f"https://api.github.com/repos/{owner}/{repo}/git/trees/{default_branch}",
+                params={"recursive": "1"},
+                headers={"Accept": "application/vnd.github+json"}
+            )
+            if resp.status_code == 200:
+                tree = resp.json().get("tree", [])
+                file_count = sum(1 for item in tree if item.get("type") == "blob")
+                github["file_count"] = 51 if file_count > 50 else file_count
+        except Exception:
+            pass
+
     technologies.sort(key=lambda x: x["confidence"], reverse=True)
-    return {"technologies": technologies, "source": "github_api", "has_cicd": has_cicd}
+    return {"technologies": technologies, "source": "github_api", "has_cicd": has_cicd, "github": github}
 
 
 def extract_from_text(text: str) -> Dict:
@@ -225,7 +261,8 @@ async def extract_technologies(
     """Main extraction entry point."""
     if repo_url and "github.com" in repo_url:
         result = await extract_from_github(repo_url)
-        if result["technologies"]:
+        github_meta = result.get("github", {})
+        if result["technologies"] or any(value is not None for value in github_meta.values()):
             return result
 
     if file_content:

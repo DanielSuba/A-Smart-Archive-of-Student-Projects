@@ -126,7 +126,7 @@ export default function PortfoliosPage() {
                   <input type="checkbox" checked={selected.has(p.id)} onChange={() => toggleSelect(p.id)} />
                   <div>
                     <div style={{ fontWeight: 500, fontSize: '0.88rem' }}>{p.title}</div>
-                    <div style={{ color: 'var(--text2)', fontSize: '0.75rem' }}>{p.year} · {p.difficulty_level}</div>
+                    <div style={{ color: 'var(--text2)', fontSize: '0.75rem' }}>{p.difficulty_level}</div>
                   </div>
                 </label>
               ))}

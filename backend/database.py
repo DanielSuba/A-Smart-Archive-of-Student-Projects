@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Text, DateTime, ForeignKey, Boolean, Enum as SAEnum
+from sqlalchemy import create_engine, Column, Integer, String, Float, Text, DateTime, ForeignKey, Boolean, Enum as SAEnum, inspect, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
@@ -56,6 +56,9 @@ class Project(Base):
     difficulty_score = Column(Float, default=0.0)
     difficulty_level = Column(String, default=DifficultyLevel.BEGINNER)
     has_cicd = Column(Boolean, default=False)
+    github_last_commit_at = Column(DateTime, nullable=True)
+    github_stars = Column(Integer, nullable=True)
+    github_file_count = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     owner = relationship("User", back_populates="projects")
@@ -114,3 +117,20 @@ def get_db():
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+    _ensure_project_columns()
+
+
+def _ensure_project_columns():
+    inspector = inspect(engine)
+    if "projects" not in inspector.get_table_names():
+        return
+    existing = {col["name"] for col in inspector.get_columns("projects")}
+    columns = {
+        "github_last_commit_at": "DATETIME",
+        "github_stars": "INTEGER",
+        "github_file_count": "INTEGER",
+    }
+    with engine.begin() as conn:
+        for name, sql_type in columns.items():
+            if name not in existing:
+                conn.execute(text(f"ALTER TABLE projects ADD COLUMN {name} {sql_type}"))

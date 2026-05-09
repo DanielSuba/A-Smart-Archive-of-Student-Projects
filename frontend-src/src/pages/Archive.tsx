@@ -5,7 +5,6 @@ import ProjectCard from '../components/ProjectCard';
 import toast from 'react-hot-toast';
 
 const DIFFICULTIES = ['', 'Początkujący', 'Średni', 'Zaawansowany', 'Ekspert'];
-const YEARS = ['', ...Array.from({ length: 6 }, (_, i) => String(new Date().getFullYear() - i))];
 
 export default function Archive() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -16,7 +15,6 @@ export default function Archive() {
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [technology, setTechnology] = useState('');
-  const [year, setYear] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [technologies, setTechnologies] = useState<any[]>([]);
 
@@ -25,7 +23,7 @@ export default function Archive() {
   useEffect(() => {
     load(1);
     setPage(1);
-  }, [search, technology, year, difficulty]);
+  }, [search, technology, difficulty]);
 
   useEffect(() => { load(page); }, [page]);
 
@@ -35,7 +33,6 @@ export default function Archive() {
       const params: any = { page: p, per_page: 10 };
       if (search) params.search = search;
       if (technology) params.technology = technology;
-      if (year) params.year = parseInt(year);
       if (difficulty) params.difficulty = difficulty;
       const res = await getProjects(params);
       setProjects(res.data.items);
@@ -71,11 +68,6 @@ export default function Archive() {
           value={technology} onChange={e => setTechnology(e.target.value)}>
           <option value="">Wszystkie technologie</option>
           {technologies.map((t: any) => <option key={t.id} value={t.name}>{t.name}</option>)}
-        </select>
-
-        <select className="form-select" style={{ width: 'auto', minWidth: '100px' }}
-          value={year} onChange={e => setYear(e.target.value)}>
-          {YEARS.map(y => <option key={y} value={y}>{y || 'Wszystkie lata'}</option>)}
         </select>
 
         <select className="form-select" style={{ width: 'auto', minWidth: '160px' }}
