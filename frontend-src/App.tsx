@@ -10,6 +10,7 @@ import AddProject from './pages/AddProject';
 import ProfilePage from './pages/ProfilePage';
 import PortfoliosPage from './pages/PortfoliosPage';
 import PublicPortfolio from './pages/PublicPortfolio';
+import About from './pages/About';
 import './App.css';
 
 function Nav() {
@@ -27,6 +28,7 @@ function Nav() {
           <Link className={active('/portfolios')} to="/portfolios">Portfolio</Link>
           <Link className="nav-link add-btn" to="/add-project">+ Dodaj Projekt</Link>
         </>}
+        <Link className={active('/about')} to="/about">About</Link>
       </div>
       <div className="nav-user">
         {isGuest ? <Link className="nav-link" to="/login">Zaloguj się</Link>
@@ -49,6 +51,7 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to="/my-projects" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/about" element={<About />} />
         <Route path="/portfolio/:slug" element={<PublicPortfolio />} />
         <Route path="/my-projects" element={<Protected><MyProjects /></Protected>} />
         <Route path="/archive" element={<Protected><Archive /></Protected>} />
