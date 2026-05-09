@@ -39,6 +39,14 @@ export interface Project {
 }
 
 export interface DocumentationEvaluation {
+  evaluations?: {
+    completeness?: DocumentationScore;
+    readability?: DocumentationScore;
+    business_context?: DocumentationScore;
+    tech_stack_rationale?: DocumentationScore;
+    tech_stack_listed?: DocumentationScore;
+  };
+  extracted_libraries?: string[];
   completeness_score?: DocumentationScore;
   readability_structure?: DocumentationScore;
   business_context?: DocumentationScore;
@@ -49,6 +57,7 @@ export interface DocumentationEvaluation {
 
 export interface DocumentationScore {
   score?: number;
+  justification?: string;
   notes?: string;
 }
 

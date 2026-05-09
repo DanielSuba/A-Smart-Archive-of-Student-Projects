@@ -13,38 +13,34 @@ AI_MODEL = os.getenv("AI_DOC_EVALUATOR_MODEL", "local-model")
 MAX_CHARS = 12000
 
 DOCUMENTATION_PROMPT = """
-Jesteś recenzentem dokumentacji projektów studenckich. Oceń wyłącznie tekst dokumentacji podany poniżej.
-Nie dopowiadaj faktów, których nie ma w tekście. Jeśli czegoś brakuje, zaznacz to w polu notes.
+Jesteś ekspertem ds. inżynierii oprogramowania oraz analitykiem biznesowym. Twoim zadaniem jest ocena dokumentacji technicznej dostarczonej przez użytkownika.
 
-Zwróć wyłącznie poprawny obiekt JSON i nic innego. Nie dodawaj markdown, komentarzy ani tekstu poza JSONem.
-Format odpowiedzi:
-{
-  "completeness_score": {
-    "score": 0,
-    "notes": "Czy dokumentacja zawiera wymagania, instrukcję instalacji, opis architektury i zrzuty ekranu."
-  },
-  "readability_structure": {
-    "score": 0,
-    "notes": "Czy język jest zrozumiały i czy użyto nagłówków, list lub tabel."
-  },
-  "business_context": {
-    "score": 0,
-    "notes": "Czy wyjaśniono problem biznesowy/użytkowy rozwiązywany przez aplikację."
-  },
-  "tech_stack_rationale": {
-    "score": 0,
-    "notes": "Czy autor uzasadnił wybór technologii, a nie tylko je wymienił."
-  },
-  "libraries_used": ["nazwa biblioteki lub technologii"],
-  "summary": "Krótka ocena dokumentacji w 1-2 zdaniach."
-}
+Przeanalizuj dokumentację według poniższych kryteriów i przyznaj punkty w skali od 0 do 10 dla każdej kategorii. Nie dopowiadaj faktów, których nie ma w tekście. Pamiętaj, że nie widzisz obrazów ani zrzutów ekranu, więc całkowicie je zignoruj w swojej ocenie.
 
-Skala score: liczba całkowita od 0 do 100.
+KRYTERIA OCENY:
 
-Tekst dokumentacji:
----
+Completeness Score (Kompletność) [0-10]:
+Czy dokumentacja zawiera kluczowe sekcje, takie jak Wymagania, Instrukcja instalacji oraz Opis architektury? Zignoruj brak zrzutów ekranu i obrazków.
+
+Readability & Structure (Czytelność) [0-10]:
+Czy język jest zrozumiały? Czy autor odpowiednio użył formatowania, takiego jak nagłówki, listy i tabele, aby ułatwić czytanie?
+
+Business Context (Kontekst biznesowy) [0-10]:
+Przyznaj punkty bazowe, np. 5, jeśli dokumentacja w ogóle opisuje problem, który rozwiązuje. Resztę punktów przyznaj za to, jak dobrze i zrozumiale wyjaśniono, dlaczego to rozwiązanie jest korzystne dla biznesu.
+
+Tech Stack Rationale (Uzasadnienie technologii) [0-10]:
+Nie oceniaj tylko faktu użycia technologii. Oceń, czy autor jasno uzasadnił, dlaczego wybrał dane narzędzia, np. dlaczego użyto PostgreSQL zamiast innej bazy.
+
+Tech Stack Listed (Wymienienie technologii) [0 lub 10]:
+Przyznaj 10 punktów, jeśli w dokumentacji znajduje się jawna lista lub spis użytych technologii i bibliotek. Jeśli jej brak, daj 0.
+
+WYMAGANY FORMAT WYJŚCIOWY:
+Musisz odpowiedzieć WYŁĄCZNIE w formacie poprawnym, zminimalizowanym JSON, bez żadnego dodatkowego tekstu na początku ani na końcu. Klucze JSON muszą pozostać po angielsku, ale wszystkie wartości tekstowe, w szczególności pola "justification" oraz nazwy technologii i bibliotek w "extracted_libraries", wpisz po polsku. Nie używaj języka angielskiego w uzasadnieniach. Użyj dokładnie poniższej struktury:
+
+{"evaluations":{"completeness":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"readability":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"business_context":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"tech_stack_rationale":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"tech_stack_listed":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"}},"extracted_libraries":["lista","wykrytych","technologii","i bibliotek po polsku"]}
+
+Dokumentacja do oceny:
 __DOCUMENTATION_TEXT__
----
 """.strip()
 
 

@@ -43,10 +43,11 @@ function documentationUrl(path: string | null) {
   return `/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
 }
 
-function scoreText(item: { score?: number; notes?: string } | undefined) {
+function scoreText(item: { score?: number; justification?: string; notes?: string } | undefined) {
   if (!item) return 'Brak danych';
-  const score = typeof item.score === 'number' ? `${item.score}/100` : 'Brak oceny';
-  return item.notes ? `${score} - ${item.notes}` : score;
+  const score = typeof item.score === 'number' ? `${item.score}/10` : 'Brak oceny';
+  const justification = item.justification || item.notes;
+  return justification ? `${score} - ${justification}` : score;
 }
 
 function documentationRows(project: Project) {
@@ -57,6 +58,16 @@ function documentationRows(project: Project) {
     return [['Status', 'Ocenianie jest niedostępne']];
   }
   const evaluation = project.ai_doc_evaluation;
+  if (evaluation.evaluations) {
+    return [
+      ['Completeness Score (Kompletność)', scoreText(evaluation.evaluations.completeness)],
+      ['Readability & Structure (Czytelność)', scoreText(evaluation.evaluations.readability)],
+      ['Business Context (Kontekst biznesowy)', scoreText(evaluation.evaluations.business_context)],
+      ['Tech Stack Rationale (Uzasadnienie technologii)', scoreText(evaluation.evaluations.tech_stack_rationale)],
+      ['Tech Stack Listed (Wymienienie technologii)', scoreText(evaluation.evaluations.tech_stack_listed)],
+      ['Spis użytych bibliotek', evaluation.extracted_libraries?.length ? evaluation.extracted_libraries.join(', ') : 'Brak danych'],
+    ];
+  }
   return [
     ['Completeness Score (Kompletność)', scoreText(evaluation.completeness_score)],
     ['Readability & Structure (Czytelność)', scoreText(evaluation.readability_structure)],
