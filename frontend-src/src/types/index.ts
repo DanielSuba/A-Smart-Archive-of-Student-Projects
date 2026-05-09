@@ -48,7 +48,6 @@ export interface DocumentationEvaluation {
     tech_stack_listed?: DocumentationScore;
   };
   extracted_libraries?: string[];
-  summary?: string;
   completeness_score?: DocumentationScore;
   readability_structure?: DocumentationScore;
   business_context?: DocumentationScore;

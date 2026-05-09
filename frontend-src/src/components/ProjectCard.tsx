@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Project } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Props {
   project: Project;
@@ -21,6 +22,7 @@ function diffClass(level: string) {
 // Funkcja służy do renderowania karty projektu na listach projektów.
 export default function ProjectCard({ project, onDelete, showOwner, selected, onSelect }: Props) {
   const { user, isAdmin } = useAuth();
+  const { t } = useLanguage();
   const canEdit = user?.id === project.user_id || isAdmin;
 
   return (
@@ -32,7 +34,7 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
           </label>
         )}
         <Link className="project-title" to={`/project/${project.id}`}>{project.title}</Link>
-        <span className={diffClass(project.difficulty_level)}>{project.difficulty_level}</span>
+        <span className={diffClass(project.difficulty_level)}>{t.difficulty[project.difficulty_level] || project.difficulty_level}</span>
       </div>
 
       <div className="project-meta">
@@ -40,16 +42,16 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
         {showOwner && project.owner && <> · <span style={{ color: 'var(--accent)' }}>{project.owner.name}</span></>}
         {project.has_cicd && <> · <span className="badge badge-cicd">CI/CD</span></>}
         <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--text2)' }}>
-          [{project.difficulty_score.toFixed(0)} pkt]
+          [{project.difficulty_score.toFixed(0)} {t.projectCard.pts}]
         </span>
       </div>
 
       <p className="project-desc">{project.description}</p>
 
       <div className="tech-list">
-        {project.technologies.slice(0, 6).map(t => (
-          <span key={t.id} className="badge badge-tech" title={`Pewność: ${t.confidence_level.toFixed(0)}%`}>
-            {t.name}
+        {project.technologies.slice(0, 6).map(tech => (
+          <span key={tech.id} className="badge badge-tech" title={t.projectCard.confidence(Math.round(tech.confidence_level))}>
+            {tech.name}
           </span>
         ))}
         {project.technologies.length > 6 && (
@@ -58,12 +60,12 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
       </div>
 
       <div className="card-actions">
-        <Link className="btn btn-accent btn-sm" to={`/project/${project.id}`}>Szczegóły</Link>
+        <Link className="btn btn-accent btn-sm" to={`/project/${project.id}`}>{t.projectCard.details}</Link>
         {project.repo_url && (
-          <a className="btn btn-secondary btn-sm" href={project.repo_url} target="_blank" rel="noreferrer">GitHub</a>
+          <a className="btn btn-secondary btn-sm" href={project.repo_url} target="_blank" rel="noreferrer">{t.projectCard.github}</a>
         )}
         {canEdit && onDelete && (
-          <button className="btn btn-danger btn-sm" onClick={() => onDelete(project.id)}>Usuń</button>
+          <button className="btn btn-danger btn-sm" onClick={() => onDelete(project.id)}>{t.projectCard.delete}</button>
         )}
       </div>
     </div>

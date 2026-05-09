@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getProjects, deleteProject, getTechnologies } from '../services/api';
 import type { Project } from '../types';
 import ProjectCard from '../components/ProjectCard';
+import { useLanguage } from '../contexts/LanguageContext';
 import toast from 'react-hot-toast';
 
 const DIFFICULTIES = ['', 'Początkujący', 'Średni', 'Zaawansowany', 'Ekspert'];
@@ -18,6 +19,7 @@ export default function Archive() {
   const [technology, setTechnology] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [technologies, setTechnologies] = useState<any[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => { getTechnologies().then(r => setTechnologies(r.data)); }, []);
 
@@ -45,9 +47,9 @@ export default function Archive() {
 
   // Funkcja służy do usuwania projektu z archiwum.
   async function handleDelete(id: number) {
-    if (!confirm('Usunąć projekt?')) return;
-    try { await deleteProject(id); toast.success('Projekt usunięty'); load(page); }
-    catch { toast.error('Błąd usuwania'); }
+    if (!confirm(t.archive.deleteConfirm)) return;
+    try { await deleteProject(id); toast.success(t.archive.deleteSuccess); load(page); }
+    catch { toast.error(t.archive.deleteError); }
   }
 
   // Funkcja służy do zatwierdzania tekstu wyszukiwania.
@@ -56,35 +58,37 @@ export default function Archive() {
   return (
     <div>
       <div className="page-header">
-        <h1 className="page-title">Archiwum Globalne</h1>
-        <p className="page-subtitle">{total} projektów od wszystkich studentów</p>
+        <h1 className="page-title">{t.archive.title}</h1>
+        <p className="page-subtitle">{t.archive.subtitle(total)}</p>
       </div>
 
       <div className="search-bar">
         <form onSubmit={handleSearch} style={{ display: 'flex', gap: '0.5rem', flex: 1 }}>
-          <input className="form-input search-input" placeholder="Szukaj po nazwie lub opisie..."
+          <input className="form-input search-input" placeholder={t.archive.searchPlaceholder}
             value={searchInput} onChange={e => setSearchInput(e.target.value)} />
-          <button className="btn btn-secondary" type="submit">Szukaj</button>
-          {search && <button className="btn btn-secondary" type="button" onClick={() => { setSearch(''); setSearchInput(''); }}>Wyczyść</button>}
+          <button className="btn btn-secondary" type="submit">{t.archive.search}</button>
+          {search && <button className="btn btn-secondary" type="button" onClick={() => { setSearch(''); setSearchInput(''); }}>{t.archive.clear}</button>}
         </form>
 
         <select className="form-select" style={{ width: 'auto', minWidth: '150px' }}
           value={technology} onChange={e => setTechnology(e.target.value)}>
-          <option value="">Wszystkie technologie</option>
-          {technologies.map((t: any) => <option key={t.id} value={t.name}>{t.name}</option>)}
+          <option value="">{t.archive.allTechnologies}</option>
+          {technologies.map((tech: any) => <option key={tech.id} value={tech.name}>{tech.name}</option>)}
         </select>
 
         <select className="form-select" style={{ width: 'auto', minWidth: '160px' }}
           value={difficulty} onChange={e => setDifficulty(e.target.value)}>
-          {DIFFICULTIES.map(d => <option key={d} value={d}>{d || 'Wszystkie poziomy'}</option>)}
+          {DIFFICULTIES.map(d => (
+            <option key={d} value={d}>{d ? (t.difficulty[d] || d) : t.archive.allLevels}</option>
+          ))}
         </select>
       </div>
 
       {loading ? <div className="spinner" /> : projects.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">Brak</div>
-          <h3>Brak wyników</h3>
-          <p>Spróbuj zmienić kryteria wyszukiwania.</p>
+          <div className="empty-state-icon">{t.archive.emptyIcon}</div>
+          <h3>{t.archive.emptyTitle}</h3>
+          <p>{t.archive.emptyText}</p>
         </div>
       ) : (
         <div className="project-grid">

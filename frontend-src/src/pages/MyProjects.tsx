@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getMyProjects, deleteProject } from '../services/api';
 import type { Project } from '../types';
 import ProjectCard from '../components/ProjectCard';
+import { useLanguage } from '../contexts/LanguageContext';
 import toast from 'react-hot-toast';
 
 const CACHE_KEY = 'cached_my_projects';
@@ -15,6 +16,7 @@ export default function MyProjects() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(!navigator.onLine);
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Funkcja służy do ustawiania trybu online po odzyskaniu połączenia.
@@ -53,31 +55,31 @@ export default function MyProjects() {
 
   // Funkcja służy do usuwania projektu użytkownika.
   async function handleDelete(id: number) {
-    if (!confirm('Czy na pewno chcesz usunąć ten projekt?')) return;
+    if (!confirm(t.myProjects.deleteConfirm)) return;
     try {
       await deleteProject(id);
-      toast.success('Projekt usunięty');
+      toast.success(t.myProjects.deleteSuccess);
       load(page);
-    } catch { toast.error('Błąd podczas usuwania'); }
+    } catch { toast.error(t.myProjects.deleteError); }
   }
 
   return (
     <div>
-      {offline && <div className="offline-banner">Jesteś w trybie offline. Przeglądasz zapisaną wersję projektów.</div>}
+      {offline && <div className="offline-banner">{t.myProjects.offlineBanner}</div>}
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
-          <h1 className="page-title">Moje Projekty</h1>
-          <p className="page-subtitle">{total} projektów w archiwum</p>
+          <h1 className="page-title">{t.myProjects.title}</h1>
+          <p className="page-subtitle">{t.myProjects.subtitle(total)}</p>
         </div>
-        <Link className="btn btn-primary" to="/add-project">+ Dodaj Projekt</Link>
+        <Link className="btn btn-primary" to="/add-project">{t.myProjects.addProject}</Link>
       </div>
 
       {loading ? <div className="spinner" /> : projects.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">Brak</div>
-          <h3>Brak projektów</h3>
-          <p>Dodaj swój pierwszy projekt, aby rozpocząć budowanie archiwum.</p>
-          <Link className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-flex' }} to="/add-project">+ Dodaj Projekt</Link>
+          <div className="empty-state-icon">{t.myProjects.emptyIcon}</div>
+          <h3>{t.myProjects.emptyTitle}</h3>
+          <p>{t.myProjects.emptyText}</p>
+          <Link className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-flex' }} to="/add-project">{t.myProjects.addProject}</Link>
         </div>
       ) : (
         <div className="project-grid">

@@ -126,3 +126,7 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);min-hei
 .difficulty-badge-Średni{background:rgba(58,122,201,.2);color:var(--accent);border:1px solid rgba(88,166,255,.3)}
 .difficulty-badge-Zaawansowany{background:rgba(210,168,255,.15);color:var(--accent4);border:1px solid rgba(210,168,255,.3)}
 .difficulty-badge-Ekspert{background:rgba(247,129,102,.15);color:var(--accent3);border:1px solid rgba(247,129,102,.3)}
+.lang-switcher{display:flex;align-items:center;gap:.15rem;margin-right:.5rem}
+.lang-btn{padding:.2rem .42rem;border-radius:4px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;letter-spacing:.03em}
+.lang-btn:hover{color:var(--text);background:var(--bg3)}
+.lang-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(88,166,255,.1)}

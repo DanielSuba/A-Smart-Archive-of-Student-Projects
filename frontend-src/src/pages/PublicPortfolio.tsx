@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPortfolio } from '../services/api';
 import type { Portfolio } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Funkcja służy do renderowania publicznego widoku portfolio.
 export default function PublicPortfolio() {
@@ -10,9 +11,10 @@ export default function PublicPortfolio() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const printRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
-    getPortfolio(slug!).then(r => setPortfolio(r.data)).catch(() => setError('Portfolio nie istnieje lub zostało usunięte.')).finally(() => setLoading(false));
+    getPortfolio(slug!).then(r => setPortfolio(r.data)).catch(() => setError(t.publicPortfolio.errorMsg)).finally(() => setLoading(false));
   }, [slug]);
 
   // Funkcja służy do uruchamiania drukowania lub zapisu portfolio do PDF.
@@ -21,8 +23,8 @@ export default function PublicPortfolio() {
   if (loading) return <div className="spinner" />;
   if (error) return (
     <div style={{ maxWidth: 600, margin: '4rem auto', textAlign: 'center' }}>
-      <div style={{ fontSize: '1rem', marginBottom: '1rem' }}>Brak wyników</div>
-      <h2 style={{ marginBottom: '0.5rem' }}>Nie znaleziono portfolio</h2>
+      <div style={{ fontSize: '1rem', marginBottom: '1rem' }}>{t.publicPortfolio.notFoundIcon}</div>
+      <h2 style={{ marginBottom: '0.5rem' }}>{t.publicPortfolio.notFound}</h2>
       <p style={{ color: 'var(--text2)' }}>{error}</p>
     </div>
   );
@@ -33,7 +35,7 @@ export default function PublicPortfolio() {
     const colors: Record<string, string> = {
       'Początkujący': '#3fb950', 'Średni': '#58a6ff', 'Zaawansowany': '#d2a8ff', 'Ekspert': '#f78166'
     };
-    return <span style={{ color: colors[level] || '#888', fontWeight: 500, fontSize: '0.8rem' }}>{level}</span>;
+    return <span style={{ color: colors[level] || '#888', fontWeight: 500, fontSize: '0.8rem' }}>{t.difficulty[level] || level}</span>;
   };
 
   return (
@@ -41,22 +43,22 @@ export default function PublicPortfolio() {
       <style>{`@media print { .no-print { display: none !important; } .card { break-inside: avoid; } }`}</style>
 
       <div className="pub-header">
-        <div className="pub-badge no-print">Publiczne Portfolio · Read-Only</div>
+        <div className="pub-badge no-print">{t.publicPortfolio.badge}</div>
         <h1 className="pub-title" style={{ marginTop: '0.75rem' }}>{portfolio.title}</h1>
         <p style={{ color: 'var(--text2)', marginTop: '0.5rem' }}>
-          {portfolio.owner.name} · {portfolio.projects.length} projektów
+          {portfolio.owner.name} · {t.publicPortfolio.projectsCount(portfolio.projects.length)}
         </p>
         {portfolio.description && <p style={{ color: 'var(--text2)', fontSize: '0.9rem', marginTop: '0.5rem' }}>{portfolio.description}</p>}
         <div style={{ marginTop: '1rem' }} className="no-print">
           <button className="btn btn-primary" onClick={handlePrint}>
-            Pobierz jako PDF (Ctrl+P)
+            {t.publicPortfolio.downloadPdf}
           </button>
         </div>
       </div>
 
       <div ref={printRef}>
         {portfolio.projects.length === 0 ? (
-          <div className="empty-state"><h3>Brak projektów</h3></div>
+          <div className="empty-state"><h3>{t.publicPortfolio.noProjects}</h3></div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {portfolio.projects.sort((a, b) => a.order_index - b.order_index).map(({ project: p }, idx) => (
@@ -81,10 +83,10 @@ export default function PublicPortfolio() {
 
                 {p.technologies.length > 0 && (
                   <div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text2)', marginBottom: '0.4rem', fontWeight: 500 }}>TECHNOLOGIE</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text2)', marginBottom: '0.4rem', fontWeight: 500 }}>{t.publicPortfolio.technologies}</div>
                     <div className="tech-list">
-                      {p.technologies.slice(0, 8).map(t => (
-                        <span key={t.id} className="badge badge-tech" title={`${t.confidence_level.toFixed(0)}%`}>{t.name}</span>
+                      {p.technologies.slice(0, 8).map(tech => (
+                        <span key={tech.id} className="badge badge-tech" title={`${tech.confidence_level.toFixed(0)}%`}>{tech.name}</span>
                       ))}
                       {p.technologies.length > 8 && <span className="badge badge-tech">+{p.technologies.length - 8}</span>}
                     </div>
@@ -103,7 +105,7 @@ export default function PublicPortfolio() {
       </div>
 
       <div style={{ textAlign: 'center', marginTop: '2rem', padding: '1rem 0', borderTop: '1px solid var(--border)', color: 'var(--text2)', fontSize: '0.8rem' }} className="no-print">
-        Wygenerowano przez Archiwum Projektów Studenta · {new Date(portfolio.created_at).toLocaleDateString('pl')}
+        {t.publicPortfolio.footer(new Date(portfolio.created_at).toLocaleDateString(t.dateLocale))}
       </div>
     </div>
   );
