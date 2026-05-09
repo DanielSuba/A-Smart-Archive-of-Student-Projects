@@ -16,7 +16,8 @@ DEMO_USERS = [
     {"email": "anna.kowalska@student.pl", "name": "Anna Kowalska", "password": "demo123", "role": "STUDENT"},
     {"email": "piotr.nowak@student.pl", "name": "Piotr Nowak", "password": "demo123", "role": "STUDENT"},
     {"email": "marta.wisniewska@student.pl", "name": "Marta Wiśniewska", "password": "demo123", "role": "STUDENT"},
-    {"email": "admin@archiwum.pl", "name": "Administrator", "password": "admin123", "role": "ADMIN"},
+    {"email": "danieladmin1@archiwum.pl", "name": "Daniel Admin", "password": "dadmin132", "role": "ADMIN"},
+    {"email": "bartosadmin1@archiwum.pl", "name": "Bartos Admin", "password": "badmin312", "role": "ADMIN"},
 ]
 
 DEMO_PROJECTS = [
@@ -303,7 +304,8 @@ def seed():
         db.commit()
         print("Seedowanie zakończone sukcesem!")
         print(f"   Użytkownicy: student1=anna.kowalska@student.pl / demo123")
-        print(f"   Admin: admin@archiwum.pl / admin123")
+        print(f"   Admin 1: danieladmin1@archiwum.pl / dadmin132")
+        print(f"   Admin 2: bartosadmin1@archiwum.pl / badmin312")
 
     except Exception as e:
         db.rollback()

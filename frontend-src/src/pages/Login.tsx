@@ -47,11 +47,6 @@ export default function Login() {
         <div className="auth-footer">
           Nie masz konta? <Link to="/register">Zarejestruj się</Link>
         </div>
-        <div style={{ marginTop: '1.25rem', padding: '0.75rem', background: 'var(--bg3)', borderRadius: '6px', fontSize: '0.78rem', color: 'var(--text2)' }}>
-          <strong style={{ color: 'var(--text)' }}>Konta demo:</strong><br />
-          Student: <code style={{ color: 'var(--accent)' }}>anna.kowalska@student.pl</code> / <code>demo123</code><br />
-          Admin: <code style={{ color: 'var(--accent)' }}>admin@archiwum.pl</code> / <code>admin123</code>
-        </div>
       </div>
     </div>
   );
