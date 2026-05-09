@@ -98,6 +98,8 @@ class ProjectOut(BaseModel):
     github_last_commit_at: Optional[datetime] = None
     github_stars: Optional[int] = None
     github_file_count: Optional[int] = None
+    ai_doc_status: Optional[str] = None
+    ai_doc_evaluation: Optional[dict] = None
     created_at: datetime
     updated_at: datetime
     owner: Optional[UserOut]

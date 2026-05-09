@@ -43,6 +43,30 @@ function documentationUrl(path: string | null) {
   return `/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
 }
 
+function scoreText(item: { score?: number; notes?: string } | undefined) {
+  if (!item) return 'Brak danych';
+  const score = typeof item.score === 'number' ? `${item.score}/100` : 'Brak oceny';
+  return item.notes ? `${score} - ${item.notes}` : score;
+}
+
+function documentationRows(project: Project) {
+  if (!project.doc_file_path || project.ai_doc_status === 'no_documentation') {
+    return [['Status', 'Brak dokumentacji dla oceniania']];
+  }
+  if (project.ai_doc_status !== 'ready' || !project.ai_doc_evaluation) {
+    return [['Status', 'Ocenianie jest niedostępne']];
+  }
+  const evaluation = project.ai_doc_evaluation;
+  return [
+    ['Completeness Score (Kompletność)', scoreText(evaluation.completeness_score)],
+    ['Readability & Structure (Czytelność)', scoreText(evaluation.readability_structure)],
+    ['Business Context (Kontekst biznesowy)', scoreText(evaluation.business_context)],
+    ['Tech Stack Rationale (Uzasadnienie technologii)', scoreText(evaluation.tech_stack_rationale)],
+    ['Spis użytych bibliotek', evaluation.libraries_used?.length ? evaluation.libraries_used.join(', ') : 'Brak danych'],
+    ['Podsumowanie', evaluation.summary || 'Brak danych'],
+  ];
+}
+
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
@@ -172,6 +196,16 @@ export default function ProjectDetail() {
                   </div>
                 ))
               )}
+            </div>
+
+            <div className="card" style={{ marginTop: '1rem' }}>
+              <div className="section-title">Ocena dokumentacji AI</div>
+              {documentationRows(project).map(([label, val]) => (
+                <div key={label} style={{ display: 'grid', gridTemplateColumns: 'minmax(160px, 240px) 1fr', gap: '1rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border)', fontSize: '0.85rem' }}>
+                  <span style={{ color: 'var(--text2)' }}>{label}</span>
+                  <span style={{ fontWeight: 500 }}>{val}</span>
+                </div>
+              ))}
             </div>
           </div>
 

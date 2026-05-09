@@ -30,10 +30,26 @@ export interface Project {
   github_last_commit_at: string | null;
   github_stars: number | null;
   github_file_count: number | null;
+  ai_doc_status: 'ready' | 'unavailable' | 'no_documentation' | null;
+  ai_doc_evaluation: DocumentationEvaluation | null;
   created_at: string;
   updated_at: string;
   owner: User;
   technologies: Technology[];
+}
+
+export interface DocumentationEvaluation {
+  completeness_score?: DocumentationScore;
+  readability_structure?: DocumentationScore;
+  business_context?: DocumentationScore;
+  tech_stack_rationale?: DocumentationScore;
+  libraries_used?: string[];
+  summary?: string;
+}
+
+export interface DocumentationScore {
+  score?: number;
+  notes?: string;
 }
 
 export interface ProjectList {

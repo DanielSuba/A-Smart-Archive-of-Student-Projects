@@ -60,6 +60,8 @@ class Project(Base):
     github_last_commit_at = Column(DateTime, nullable=True)
     github_stars = Column(Integer, nullable=True)
     github_file_count = Column(Integer, nullable=True)
+    ai_doc_status = Column(String, nullable=True)
+    ai_doc_evaluation = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     owner = relationship("User", back_populates="projects")
@@ -131,6 +133,8 @@ def _ensure_project_columns():
         "github_last_commit_at": "DATETIME",
         "github_stars": "INTEGER",
         "github_file_count": "INTEGER",
+        "ai_doc_status": "VARCHAR",
+        "ai_doc_evaluation": "TEXT",
     }
     with engine.begin() as conn:
         for name, sql_type in columns.items():

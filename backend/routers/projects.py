@@ -10,6 +10,8 @@ from auth import require_auth, get_current_user
 from schemas import ProjectCreate, ProjectUpdate, ProjectOut, ProjectListOut, TechExtractionResult
 from services.tech_extractor import extract_technologies
 from services.difficulty_scorer import calculate_difficulty
+from services.doc_ai_evaluator import evaluate_documentation
+import json
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
 UPLOAD_DIR = "uploads"
@@ -44,6 +46,8 @@ def _build_project_out(project: Project, db: Session) -> ProjectOut:
         github_last_commit_at=project.github_last_commit_at,
         github_stars=project.github_stars,
         github_file_count=project.github_file_count,
+        ai_doc_status=project.ai_doc_status,
+        ai_doc_evaluation=_json_or_none(project.ai_doc_evaluation),
         created_at=project.created_at,
         updated_at=project.updated_at,
         owner=project.owner,
@@ -146,6 +150,7 @@ async def create_project(
     project.difficulty_score = diff["score"]
     project.difficulty_level = diff["level"]
     project.has_cicd = extraction.get("has_cicd", False)
+    await _evaluate_project_documentation(project)
 
     db.commit()
     db.refresh(project)
@@ -313,6 +318,7 @@ async def analyze_project(
     project.difficulty_level = diff["level"]
     project.has_cicd = extraction.get("has_cicd", False)
     _apply_github_metadata(project, extraction)
+    await _evaluate_project_documentation(project)
 
     db.commit()
     return TechExtractionResult(
@@ -339,3 +345,24 @@ def _apply_github_metadata(project: Project, extraction: dict):
     project.github_file_count = github_meta.get("file_count")
     if project.github_last_commit_at:
         project.year = project.github_last_commit_at.year
+
+
+def _json_or_none(value: Optional[str]):
+    if not value:
+        return None
+    try:
+        parsed = json.loads(value)
+        return parsed if isinstance(parsed, dict) else None
+    except json.JSONDecodeError:
+        return None
+
+
+async def _evaluate_project_documentation(project: Project):
+    if not project.doc_file_path:
+        project.ai_doc_status = "no_documentation"
+        project.ai_doc_evaluation = None
+        return
+
+    status, evaluation = await evaluate_documentation(project.doc_file_path)
+    project.ai_doc_status = status
+    project.ai_doc_evaluation = json.dumps(evaluation, ensure_ascii=False) if evaluation else None
