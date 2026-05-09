@@ -96,6 +96,7 @@ function AppRoutes() {
         <Route path="/project/:id" element={<Protected><ProjectDetail /></Protected>} />
         <Route path="/add-project" element={<Protected><AddProject /></Protected>} />
         <Route path="/profile" element={<Protected><ProfilePage /></Protected>} />
+        <Route path="/profile/:userId" element={<Protected><ProfilePage /></Protected>} />
         <Route path="/portfolios" element={<Protected><PortfoliosPage /></Protected>} />
       </Routes>
     </main>

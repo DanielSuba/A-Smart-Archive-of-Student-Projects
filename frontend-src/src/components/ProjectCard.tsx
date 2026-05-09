@@ -39,7 +39,7 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
 
       <div className="project-meta">
         {project.role}
-        {showOwner && project.owner && <> · <span style={{ color: 'var(--accent)' }}>{project.owner.name}</span></>}
+        {showOwner && project.owner && <> · <Link to={`/profile/${project.owner.id}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>{project.owner.name}</Link></>}
         {project.has_cicd && <> · <span className="badge badge-cicd">CI/CD</span></>}
         <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--text2)' }}>
           [{project.difficulty_score.toFixed(0)} {t.projectCard.pts}]

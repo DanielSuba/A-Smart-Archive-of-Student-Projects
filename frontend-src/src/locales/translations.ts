@@ -65,6 +65,8 @@ export interface T {
     skillStat: (count: number, avg: number) => string;
     topTitle: string; recoTitle: string; recoText: string; recoEmpty: string;
     allTechTitle: (n: number) => string;
+    contactsTitle: string; contactsEdit: string; contactsSave: string; contactsCancel: string;
+    contactsEmpty: string; contactsSaved: string; contactsError: string;
   };
   portfolios: {
     title: string; subtitle: (n: number) => string; generateBtn: string;
@@ -198,6 +200,9 @@ const pl: T = {
     recoText: 'Na podstawie Twojego profilu, warto poznać:',
     recoEmpty: 'Dodaj więcej projektów, aby uzyskać rekomendacje.',
     allTechTitle: (n) => `Wszystkie technologie (${n})`,
+    contactsTitle: 'Kontakty', contactsEdit: 'Edytuj kontakty', contactsSave: 'Zapisz',
+    contactsCancel: 'Anuluj', contactsEmpty: 'Brak kontaktów',
+    contactsSaved: 'Kontakty zaktualizowane', contactsError: 'Błąd zapisu kontaktów',
   },
   portfolios: {
     title: 'Portfolio', subtitle: (n) => `${n} wygenerowanych portfolio`,
@@ -344,6 +349,9 @@ const en: T = {
     recoText: 'Based on your profile, it is worth learning:',
     recoEmpty: 'Add more projects to get recommendations.',
     allTechTitle: (n) => `All technologies (${n})`,
+    contactsTitle: 'Contacts', contactsEdit: 'Edit contacts', contactsSave: 'Save',
+    contactsCancel: 'Cancel', contactsEmpty: 'No contacts',
+    contactsSaved: 'Contacts updated', contactsError: 'Error saving contacts',
   },
   portfolios: {
     title: 'Portfolio', subtitle: (n) => `${n} generated portfolios`,
@@ -495,6 +503,9 @@ const lt: T = {
     recoText: 'Remiantis jūsų profiliu, verta išmokti:',
     recoEmpty: 'Pridėkite daugiau projektų, kad gautumėte rekomendacijas.',
     allTechTitle: (n) => `Visos technologijos (${n})`,
+    contactsTitle: 'Kontaktai', contactsEdit: 'Redaguoti kontaktus', contactsSave: 'Išsaugoti',
+    contactsCancel: 'Atšaukti', contactsEmpty: 'Kontaktų nėra',
+    contactsSaved: 'Kontaktai atnaujinti', contactsError: 'Kontaktų išsaugojimo klaida',
   },
   portfolios: {
     title: 'Portfelis', subtitle: (n) => `${n} sugeneruotų portfelių`,

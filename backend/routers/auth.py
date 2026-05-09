@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db, User, UserRole
 from auth import verify_password, get_password_hash, create_access_token, require_auth
-from schemas import UserCreate, UserLogin, TokenOut, UserOut
+from schemas import UserCreate, UserLogin, TokenOut, UserOut, ContactsUpdate
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -49,4 +49,24 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
 # Funkcja służy do zwracania danych aktualnie zalogowanego użytkownika.
 @router.get("/me", response_model=UserOut)
 def me(current_user: User = Depends(require_auth)):
+    return UserOut.model_validate(current_user)
+
+
+# Funkcja służy do aktualizacji kontaktów (Facebook/Discord/GitHub/LinkedIn) zalogowanego użytkownika.
+@router.put("/me/contacts", response_model=UserOut)
+def update_my_contacts(
+    data: ContactsUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_auth),
+):
+    if data.facebook is not None:
+        current_user.facebook = data.facebook.strip() or None
+    if data.discord is not None:
+        current_user.discord = data.discord.strip() or None
+    if data.github is not None:
+        current_user.github = data.github.strip() or None
+    if data.linkedin is not None:
+        current_user.linkedin = data.linkedin.strip() or None
+    db.commit()
+    db.refresh(current_user)
     return UserOut.model_validate(current_user)

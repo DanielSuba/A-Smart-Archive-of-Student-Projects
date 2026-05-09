@@ -1,18 +1,50 @@
 import { useEffect, useState } from 'react';
-import { getMyProfile } from '../services/api';
+import { useParams } from 'react-router-dom';
+import { getMyProfile, getUserProfile, updateMyContacts } from '../services/api';
 import type { Profile } from '../types';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 // Funkcja służy do renderowania profilu kompetencji użytkownika.
 export default function ProfilePage() {
+  const { userId } = useParams<{ userId?: string }>();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [editingContacts, setEditingContacts] = useState(false);
+  const [contacts, setContacts] = useState({ facebook: '', discord: '', github: '', linkedin: '' });
   const { t } = useLanguage();
+  const { user: currentUser } = useAuth();
 
-  useEffect(() => {
-    getMyProfile().then(r => setProfile(r.data)).finally(() => setLoading(false));
-  }, []);
+  // Funkcja służy do pobrania profilu zalogowanego lub wybranego użytkownika.
+  const loadProfile = () => {
+    setLoading(true);
+    const promise = userId ? getUserProfile(Number(userId)) : getMyProfile();
+    promise.then(r => {
+      setProfile(r.data);
+      setContacts({
+        facebook: r.data.user.facebook || '',
+        discord: r.data.user.discord || '',
+        github: r.data.user.github || '',
+        linkedin: r.data.user.linkedin || '',
+      });
+    }).finally(() => setLoading(false));
+  };
+
+  useEffect(() => { loadProfile(); }, [userId]);
+
+  const isOwner = profile && currentUser && profile.user.id === currentUser.id;
+
+  // Funkcja służy do zapisywania kontaktów aktualnego użytkownika.
+  const saveContacts = async () => {
+    try {
+      await updateMyContacts(contacts);
+      toast.success(t.profile.contactsSaved);
+      setEditingContacts(false);
+      loadProfile();
+    } catch { toast.error(t.profile.contactsError); }
+  };
 
   if (loading) return <div className="spinner" />;
   if (!profile) return null;
@@ -28,6 +60,48 @@ export default function ProfilePage() {
       <div className="page-header">
         <h1 className="page-title">{t.profile.title}</h1>
         <p className="page-subtitle">{profile.user.name} · {profile.user.email}</p>
+      </div>
+
+      <div className="card" style={{ marginBottom: '1.5rem' }}>
+        <div className="section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>{t.profile.contactsTitle}</span>
+          {isOwner && !editingContacts && (
+            <button className="btn btn-secondary btn-sm" onClick={() => setEditingContacts(true)}>{t.profile.contactsEdit}</button>
+          )}
+        </div>
+        {editingContacts ? (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            {(['facebook', 'discord', 'github', 'linkedin'] as const).map(k => (
+              <div key={k} className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ textTransform: 'capitalize' }}>{k}</label>
+                <input className="form-input" value={contacts[k]}
+                  onChange={e => setContacts(c => ({ ...c, [k]: e.target.value }))}
+                  placeholder={k === 'discord' ? 'username#1234' : `https://${k}.com/...`} />
+              </div>
+            ))}
+            <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.5rem' }}>
+              <button className="btn btn-primary btn-sm" onClick={saveContacts}>{t.profile.contactsSave}</button>
+              <button className="btn btn-secondary btn-sm" onClick={() => { setEditingContacts(false); loadProfile(); }}>{t.profile.contactsCancel}</button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.88rem' }}>
+            {(['facebook', 'discord', 'github', 'linkedin'] as const).map(k => {
+              const v = profile.user[k];
+              if (!v) return null;
+              const isUrl = v.startsWith('http://') || v.startsWith('https://');
+              return (
+                <div key={k}>
+                  <span style={{ color: 'var(--text2)', textTransform: 'capitalize' }}>{k}: </span>
+                  {isUrl ? <a href={v} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>{v}</a> : <span>{v}</span>}
+                </div>
+              );
+            })}
+            {!profile.user.facebook && !profile.user.discord && !profile.user.github && !profile.user.linkedin && (
+              <span style={{ color: 'var(--text2)' }}>{t.profile.contactsEmpty}</span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="stats-row">

@@ -39,6 +39,10 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(SAEnum(UserRole), default=UserRole.STUDENT)
     created_at = Column(DateTime, default=datetime.utcnow)
+    facebook = Column(String, nullable=True)
+    discord = Column(String, nullable=True)
+    github = Column(String, nullable=True)
+    linkedin = Column(String, nullable=True)
     projects = relationship("Project", back_populates="owner", cascade="all, delete-orphan")
     portfolios = relationship("Portfolio", back_populates="owner", cascade="all, delete-orphan")
 
@@ -123,6 +127,25 @@ def get_db():
 def init_db():
     Base.metadata.create_all(bind=engine)
     _ensure_project_columns()
+    _ensure_user_columns()
+
+
+# Funkcja służy do dodawania brakujących kolumn użytkownika w istniejącej bazie.
+def _ensure_user_columns():
+    inspector = inspect(engine)
+    if "users" not in inspector.get_table_names():
+        return
+    existing = {col["name"] for col in inspector.get_columns("users")}
+    columns = {
+        "facebook": "VARCHAR",
+        "discord": "VARCHAR",
+        "github": "VARCHAR",
+        "linkedin": "VARCHAR",
+    }
+    with engine.begin() as conn:
+        for name, sql_type in columns.items():
+            if name not in existing:
+                conn.execute(text(f"ALTER TABLE users ADD COLUMN {name} {sql_type}"))
 
 
 # Funkcja służy do dodawania brakujących kolumn projektu w istniejącej bazie.

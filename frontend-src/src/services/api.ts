@@ -36,6 +36,9 @@ export const register = (data: any) => api.post('/api/auth/register', data);
 export const login = (data: any) => api.post('/api/auth/login', data);
 // Funkcja służy do pobierania danych aktualnego użytkownika.
 export const getMe = () => api.get('/api/auth/me');
+// Funkcja służy do aktualizacji kontaktów aktualnego użytkownika.
+export const updateMyContacts = (data: { facebook?: string; discord?: string; github?: string; linkedin?: string }) =>
+  api.put('/api/auth/me/contacts', data);
 
 // Projects
 // Funkcja służy do pobierania listy projektów z parametrami filtrowania.

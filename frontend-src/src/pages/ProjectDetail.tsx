@@ -208,7 +208,7 @@ export default function ProjectDetail() {
               </div>
               <div className="project-meta" style={{ fontSize: '0.875rem', marginBottom: '0.75rem' }}>
                 <strong>{project.role}</strong>
-                {project.owner && <> · <span style={{ color: 'var(--accent)' }}>{project.owner.name}</span></>}
+                {project.owner && <> · <Link to={`/profile/${project.owner.id}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>{project.owner.name}</Link></>}
                 {project.has_cicd && <span className="badge badge-cicd" style={{ marginLeft: '0.5rem' }}>CI/CD</span>}
               </div>
               <p style={{ color: 'var(--text2)', lineHeight: 1.7, marginBottom: '1rem' }}>{project.description}</p>

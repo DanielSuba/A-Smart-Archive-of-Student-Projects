@@ -12,6 +12,10 @@ export interface User {
   name: string;
   role: string;
   created_at: string;
+  facebook?: string | null;
+  discord?: string | null;
+  github?: string | null;
+  linkedin?: string | null;
 }
 
 export interface Project {

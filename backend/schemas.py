@@ -21,9 +21,20 @@ class UserOut(BaseModel):
     name: str
     role: str
     created_at: datetime
+    facebook: Optional[str] = None
+    discord: Optional[str] = None
+    github: Optional[str] = None
+    linkedin: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+
+class ContactsUpdate(BaseModel):
+    facebook: Optional[str] = None
+    discord: Optional[str] = None
+    github: Optional[str] = None
+    linkedin: Optional[str] = None
 
 
 class TokenOut(BaseModel):
