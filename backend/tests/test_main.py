@@ -49,16 +49,16 @@ def auth_headers(client):
     return {"Authorization": f"Bearer {token}"}
 
 
-def test_missing_description_blocks_save(client, auth_headers):
+def test_short_description_saves_successfully(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Test projekt", "description": "Jeden zdanie.",
         "role": "Developer",
         "repo_url": "https://github.com/test/repo",
     }, headers=auth_headers)
-    assert resp.status_code == 400
+    assert resp.status_code == 200
 
 
-def test_missing_source_blocks_save(client, auth_headers):
+def test_missing_repo_blocks_save(client, auth_headers):
     resp = client.post("/api/projects", data={
         "title": "Projekt bez źródła",
         "description": "Pierwsze zdanie jest tutaj. Drugie zdanie opisuje projekt. Trzecie zdanie to koniec.",

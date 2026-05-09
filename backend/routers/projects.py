@@ -87,15 +87,8 @@ async def create_project(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_auth),
 ):
-    # Validate: must have repo_url OR file
-    if not repo_url and not file:
-        raise HTTPException(status_code=400, detail="Musisz podać link do repozytorium lub wgrać plik dokumentacji")
-
-    # Validate description (min 3 sentences)
-    import re
-    sentences = [s.strip() for s in re.split(r'[.!?]+', description) if s.strip()]
-    if len(sentences) < 3:
-        raise HTTPException(status_code=400, detail="Opis musi zawierać co najmniej 3 zdania")
+    if not repo_url or not repo_url.strip():
+        raise HTTPException(status_code=400, detail="Musisz podać link do repozytorium")
 
     # Save uploaded file
     file_path = None

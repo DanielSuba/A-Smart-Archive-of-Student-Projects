@@ -1,7 +1,6 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from datetime import datetime
-import re
 
 
 class UserCreate(BaseModel):
@@ -22,6 +21,7 @@ class UserOut(BaseModel):
     name: str
     role: str
     created_at: datetime
+
     class Config:
         from_attributes = True
 
@@ -38,6 +38,7 @@ class TechnologyOut(BaseModel):
     category: Optional[str]
     confidence_level: float
     bytes_count: int
+
     class Config:
         from_attributes = True
 
@@ -47,15 +48,7 @@ class ProjectCreate(BaseModel):
     description: str
     year: Optional[int] = None
     role: str
-    repo_url: Optional[str] = None
-
-    @field_validator("description")
-    @classmethod
-    def description_min_sentences(cls, v):
-        sentences = [s.strip() for s in re.split(r'[.!?]+', v) if s.strip()]
-        if len(sentences) < 3:
-            raise ValueError("Opis musi zawierać co najmniej 3 zdania")
-        return v
+    repo_url: str
 
     @field_validator("title")
     @classmethod
@@ -71,15 +64,6 @@ class ProjectUpdate(BaseModel):
     year: Optional[int] = None
     role: Optional[str] = None
     repo_url: Optional[str] = None
-
-    @field_validator("description")
-    @classmethod
-    def description_min_sentences(cls, v):
-        if v is not None:
-            sentences = [s.strip() for s in re.split(r'[.!?]+', v) if s.strip()]
-            if len(sentences) < 3:
-                raise ValueError("Opis musi zawierać co najmniej 3 zdania")
-        return v
 
 
 class ProjectOut(BaseModel):
@@ -104,6 +88,7 @@ class ProjectOut(BaseModel):
     updated_at: datetime
     owner: Optional[UserOut]
     technologies: List[TechnologyOut] = []
+
     class Config:
         from_attributes = True
 
@@ -126,6 +111,7 @@ class PortfolioProjectOut(BaseModel):
     id: int
     order_index: int
     project: ProjectOut
+
     class Config:
         from_attributes = True
 
@@ -139,6 +125,7 @@ class PortfolioOut(BaseModel):
     created_at: datetime
     owner: UserOut
     projects: List[PortfolioProjectOut] = []
+
     class Config:
         from_attributes = True
 

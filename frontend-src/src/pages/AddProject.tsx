@@ -3,10 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { createProject } from '../services/api';
 import toast from 'react-hot-toast';
 
-function countSentences(text: string): number {
-  return text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 2).length;
-}
-
 export default function AddProject() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -19,14 +15,11 @@ export default function AddProject() {
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
 
-  const sentenceCount = countSentences(form.description);
-  const descValid = sentenceCount >= 3;
-  const sourceValid = form.repo_url.trim() || file;
+  const repoValid = form.repo_url.trim().length > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!descValid) { setError('Opis musi zawierać co najmniej 3 zdania.'); return; }
-    if (!sourceValid) { setError('Musisz podać link do repozytorium lub wgrać plik dokumentacji.'); return; }
+    if (!repoValid) { setError('Musisz podać link do repozytorium.'); return; }
 
     setLoading(true); setError('');
     const fd = new FormData();
@@ -66,11 +59,8 @@ export default function AddProject() {
           <div className="form-group">
             <label className="form-label">Opis <span>*</span></label>
             <textarea className="form-textarea" value={form.description} onChange={set('description')} required
-              placeholder="Opisz projekt w co najmniej 3 zdaniach: cel, technologie, wyzwania..."
+              placeholder="Opisz projekt: cel, technologie, wyzwania..."
               rows={5} />
-            <div className={`form-hint ${sentenceCount >= 3 ? '' : 'form-error'}`}>
-              {sentenceCount < 3 ? `${sentenceCount}/3 zdań — wymagane minimum 3` : `${sentenceCount} zdań`}
-            </div>
           </div>
 
           <div className="form-group">
@@ -80,28 +70,28 @@ export default function AddProject() {
           </div>
 
           <div className="section-title" style={{ marginTop: '0.5rem' }}>Źródło projektu <span style={{ color: 'var(--accent3)' }}>*</span></div>
-          <p className="form-hint" style={{ marginBottom: '0.75rem' }}>Podaj przynajmniej jedno źródło — repozytorium lub plik dokumentacji.</p>
+          <p className="form-hint" style={{ marginBottom: '0.75rem' }}>Podaj link do repozytorium. Dokumentacja jest opcjonalna.</p>
 
           <div className="form-group">
-            <label className="form-label">Link do repozytorium (GitHub, GitLab...)</label>
+            <label className="form-label">Link do repozytorium (GitHub) <span>*</span></label>
             <input className="form-input" value={form.repo_url} onChange={set('repo_url')}
-              placeholder="https://github.com/uzytkownik/repozytorium" type="url" />
+              placeholder="https://github.com/uzytkownik/repozytorium" type="url" required />
             <div className="form-hint">Technologie zostaną wykryte automatycznie z GitHub API</div>
           </div>
 
           <div className="form-group">
-            <label className="form-label">lub wgraj plik dokumentacji (PDF, package.json)</label>
+            <label className="form-label">Wgraj plik dokumentacji (opcjonalnie: PDF, package.json)</label>
             <input className="form-input" type="file" accept=".pdf,.json,.txt,.zip"
               onChange={e => setFile(e.target.files?.[0] || null)} />
             {file && <div className="form-hint" style={{ color: 'var(--accent2)' }}>Plik: {file.name}</div>}
           </div>
 
-          {!sourceValid && form.title && (
-            <div className="alert alert-warning">Podaj link do repozytorium lub wgraj plik dokumentacji</div>
+          {!repoValid && form.title && (
+            <div className="alert alert-warning">Podaj link do repozytorium</div>
           )}
 
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-            <button className="btn btn-primary" type="submit" disabled={loading || !descValid || !sourceValid}>
+            <button className="btn btn-primary" type="submit" disabled={loading || !repoValid}>
               {loading ? 'Analizowanie...' : 'Zapisz i Analizuj'}
             </button>
             <button className="btn btn-secondary" type="button" onClick={() => navigate(-1)}>Anuluj</button>
