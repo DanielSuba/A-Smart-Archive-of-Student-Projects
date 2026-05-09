@@ -15,6 +15,8 @@
 body{font-family:var(--font-main);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 .navbar{display:flex;align-items:center;gap:.5rem;padding:0 1.5rem;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .nav-brand{font-family:var(--font-main);font-size:1.05rem;font-weight:700;white-space:nowrap;margin-right:.5rem}
+.nav-herb{display:flex;align-items:center;height:100%;margin-right:.75rem;flex-shrink:0}
+.nav-herb img{height:40px;width:auto;max-height:calc(56px - 16px);object-fit:contain;display:block}
 .nav-links{display:flex;gap:.2rem;flex:1;overflow-x:auto}
 .nav-link{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:6px;font-size:.85rem;color:var(--text2);text-decoration:none;transition:all .15s;border:none;background:none;cursor:pointer;font-family:inherit;white-space:nowrap}
 .nav-link:hover,.nav-link.active{color:var(--text);background:var(--bg3)}

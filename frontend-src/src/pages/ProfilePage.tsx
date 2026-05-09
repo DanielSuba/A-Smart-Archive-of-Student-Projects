@@ -62,49 +62,6 @@ export default function ProfilePage() {
         <p className="page-subtitle">{profile.user.name} · {profile.user.email}</p>
       </div>
 
-      <div className="card" style={{ marginBottom: '1.5rem' }}>
-        <div className="section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>{t.profile.contactsTitle}</span>
-          {isOwner && !editingContacts && (
-            <button className="btn btn-secondary btn-sm" onClick={() => setEditingContacts(true)}>{t.profile.contactsEdit}</button>
-          )}
-        </div>
-        {editingContacts ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-            {(['linkedin', 'github', 'facebook', 'discord'] as const).map(k => (
-              <div key={k} className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label" style={{ textTransform: 'capitalize' }}>{k}</label>
-                <input className="form-input" value={contacts[k]}
-                  onChange={e => setContacts(c => ({ ...c, [k]: e.target.value }))}
-                  placeholder={k === 'discord' ? 'username#1234' : `https://${k}.com/...`} />
-              </div>
-            ))}
-            <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.5rem' }}>
-              <button className="btn btn-primary btn-sm" onClick={saveContacts}>{t.profile.contactsSave}</button>
-              <button className="btn btn-secondary btn-sm" onClick={() => { setEditingContacts(false); loadProfile(); }}>{t.profile.contactsCancel}</button>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem 1.5rem', fontSize: '0.88rem' }}>
-            {(['linkedin', 'github', 'facebook', 'discord'] as const).map(k => {
-              const v = profile.user[k];
-              const isUrl = !!v && (v.startsWith('http://') || v.startsWith('https://'));
-              return (
-                <div key={k}>
-                  <span style={{ color: 'var(--text2)', textTransform: 'capitalize' }}>{k}: </span>
-                  {v ? (
-                    isUrl ? <a href={v} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>{v}</a> : <span>{v}</span>
-                  ) : <span style={{ color: 'var(--text2)' }}>—</span>}
-                </div>
-              );
-            })}
-            {!profile.user.facebook && !profile.user.discord && !profile.user.github && !profile.user.linkedin && (
-              <span style={{ color: 'var(--text2)', gridColumn: '1 / -1' }}>{t.profile.contactsEmpty}</span>
-            )}
-          </div>
-        )}
-      </div>
-
       <div className="stats-row">
         {[
           { n: profile.total_projects, l: t.profile.statProjects },
@@ -200,6 +157,49 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="card" style={{ marginTop: '1.5rem' }}>
+        <div className="section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>{t.profile.contactsTitle}</span>
+          {isOwner && !editingContacts && (
+            <button className="btn btn-secondary btn-sm" onClick={() => setEditingContacts(true)}>{t.profile.contactsEdit}</button>
+          )}
+        </div>
+        {editingContacts ? (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            {(['linkedin', 'github', 'facebook', 'discord'] as const).map(k => (
+              <div key={k} className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ textTransform: 'capitalize' }}>{k}</label>
+                <input className="form-input" value={contacts[k]}
+                  onChange={e => setContacts(c => ({ ...c, [k]: e.target.value }))}
+                  placeholder={k === 'discord' ? 'username#1234' : `https://${k}.com/...`} />
+              </div>
+            ))}
+            <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.5rem' }}>
+              <button className="btn btn-primary btn-sm" onClick={saveContacts}>{t.profile.contactsSave}</button>
+              <button className="btn btn-secondary btn-sm" onClick={() => { setEditingContacts(false); loadProfile(); }}>{t.profile.contactsCancel}</button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem 1.5rem', fontSize: '0.88rem' }}>
+            {(['linkedin', 'github', 'facebook', 'discord'] as const).map(k => {
+              const v = profile.user[k];
+              const isUrl = !!v && (v.startsWith('http://') || v.startsWith('https://'));
+              return (
+                <div key={k}>
+                  <span style={{ color: 'var(--text2)', textTransform: 'capitalize' }}>{k}: </span>
+                  {v ? (
+                    isUrl ? <a href={v} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>{v}</a> : <span>{v}</span>
+                  ) : <span style={{ color: 'var(--text2)' }}>—</span>}
+                </div>
+              );
+            })}
+            {!profile.user.facebook && !profile.user.discord && !profile.user.github && !profile.user.linkedin && (
+              <span style={{ color: 'var(--text2)', gridColumn: '1 / -1' }}>{t.profile.contactsEmpty}</span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

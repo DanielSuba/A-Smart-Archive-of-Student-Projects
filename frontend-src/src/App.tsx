@@ -53,14 +53,16 @@ function Nav() {
   const active = (p: string) => loc.pathname === p ? 'nav-link active' : 'nav-link';
   return (
     <nav className="navbar">
-      <div className="nav-brand">{t.nav.brand}</div>
+      <Link to="/" className="nav-herb" aria-label="UWB">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXh6XCFOXCVjhd8WxCUnhZ3wF8BrNdO9UbDw&s" alt="UWB" />
+      </Link>
       <div className="nav-links">
         {!isGuest && <>
+          <Link className="nav-link add-btn" to="/add-project">{t.nav.addProject}</Link>
           <Link className={active('/my-projects')} to="/my-projects">{t.nav.myProjects}</Link>
           <Link className={active('/archive')} to="/archive">{t.nav.archive}</Link>
           <Link className={active('/profile')} to="/profile">{t.nav.profile}</Link>
           <Link className={active('/portfolios')} to="/portfolios">{t.nav.portfolio}</Link>
-          <Link className="nav-link add-btn" to="/add-project">{t.nav.addProject}</Link>
         </>}
         <Link className={active('/about')} to="/about">{t.nav.about}</Link>
       </div>
