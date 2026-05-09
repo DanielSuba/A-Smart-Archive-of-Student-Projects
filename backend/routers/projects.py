@@ -240,7 +240,12 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
 @router.put("/{project_id}", response_model=ProjectOut)
 async def update_project(
     project_id: int,
-    data: ProjectUpdate,
+    title: Optional[str] = Form(None),
+    description: Optional[str] = Form(None),
+    year: Optional[int] = Form(None),
+    role: Optional[str] = Form(None),
+    repo_url: Optional[str] = Form(None),
+    file: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_auth),
 ):
@@ -251,20 +256,35 @@ async def update_project(
     if project.user_id != current_user.id and current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Brak dostępu")
 
-    if data.title is not None:
-        project.title = data.title
-    if data.description is not None:
-        project.description = data.description
-    if data.year is not None:
-        project.year = data.year
-    if data.role is not None:
-        project.role = data.role
-    if data.repo_url is not None:
-        project.repo_url = data.repo_url
+    if title is not None:
+        project.title = title
+    if description is not None:
+        project.description = description
+    if year is not None:
+        project.year = year
+    if role is not None:
+        project.role = role
+    if repo_url is not None:
+        project.repo_url = repo_url
+
+    # Replace uploaded documentation file if a new one is provided
+    if file and file.filename:
+        if project.doc_file_path and os.path.exists(project.doc_file_path):
+            try:
+                os.remove(project.doc_file_path)
+            except OSError:
+                pass
+        ext = os.path.splitext(file.filename)[1]
+        fname = f"{uuid.uuid4()}{ext}"
+        new_path = os.path.join(UPLOAD_DIR, fname)
+        with open(new_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        project.doc_file_path = new_path
+        await _evaluate_project_documentation(project)
 
     # Re-extract technologies if repo changed
-    if data.repo_url:
-        extraction = await extract_technologies(repo_url=data.repo_url, description=project.description)
+    if repo_url:
+        extraction = await extract_technologies(repo_url=repo_url, description=project.description)
         await _save_technologies(project, extraction, db)
         tech_list = extraction.get("technologies", [])
         diff = calculate_difficulty(tech_list, project.description, extraction.get("has_cicd", False), project.repo_url)

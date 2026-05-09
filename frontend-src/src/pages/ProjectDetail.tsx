@@ -96,6 +96,7 @@ export default function ProjectDetail() {
   const [analyzing, setAnalyzing] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', description: '', role: '', repo_url: '' });
+  const [editFile, setEditFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
   const { t } = useLanguage();
@@ -137,9 +138,13 @@ export default function ProjectDetail() {
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await updateProject(Number(id), editForm);
+      const fd = new FormData();
+      Object.entries(editForm).forEach(([k, v]) => { if (v !== undefined && v !== null) fd.append(k, String(v)); });
+      if (editFile) fd.append('file', editFile);
+      await updateProject(Number(id), fd);
       toast.success(t.projectDetail.updateSuccess);
       setEditing(false);
+      setEditFile(null);
       loadProject();
     } catch (err: any) { toast.error(err.response?.data?.detail || t.projectDetail.updateError); }
   }
@@ -181,9 +186,15 @@ export default function ProjectDetail() {
               <input className="form-input" value={editForm.repo_url}
                 onChange={e => setEditForm(f => ({ ...f, repo_url: e.target.value }))} type="url" />
             </div>
+            <div className="form-group">
+              <label className="form-label">{t.addProject.labelFile}</label>
+              <input className="form-input" type="file" accept=".pdf,.json,.txt,.zip"
+                onChange={e => setEditFile(e.target.files?.[0] || null)} />
+              {editFile && <div className="form-hint" style={{ color: 'var(--accent2)' }}>{t.addProject.fileSelected(editFile.name)}</div>}
+            </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button className="btn btn-primary" type="submit">{t.projectDetail.save}</button>
-              <button className="btn btn-secondary" type="button" onClick={() => setEditing(false)}>{t.projectDetail.cancel}</button>
+              <button className="btn btn-secondary" type="button" onClick={() => { setEditing(false); setEditFile(null); }}>{t.projectDetail.cancel}</button>
             </div>
           </form>
         </div>

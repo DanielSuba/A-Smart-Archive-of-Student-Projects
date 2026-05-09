@@ -49,7 +49,9 @@ export const createProject = (data: FormData) => api.post('/api/projects', data,
   headers: { 'Content-Type': 'multipart/form-data' }
 });
 // Funkcja służy do aktualizowania danych projektu.
-export const updateProject = (id: number, data: any) => api.put(`/api/projects/${id}`, data);
+export const updateProject = (id: number, data: FormData) => api.put(`/api/projects/${id}`, data, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});
 // Funkcja służy do usuwania projektu.
 export const deleteProject = (id: number) => api.delete(`/api/projects/${id}`);
 // Funkcja służy do ponownego uruchamiania analizy projektu.
