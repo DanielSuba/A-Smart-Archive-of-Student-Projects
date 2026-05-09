@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -14,6 +15,20 @@ import PortfoliosPage from './pages/PortfoliosPage';
 import PublicPortfolio from './pages/PublicPortfolio';
 import About from './pages/About';
 import './App.css';
+
+// Funkcja służy do renderowania przełącznika motywu jasny/ciemny.
+function ThemeToggle() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('theme') as 'light' | 'dark') || 'dark');
+  useEffect(() => {
+    document.documentElement.classList.toggle('light', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+  return (
+    <button className="theme-btn" onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')} title="Zmień motyw">
+      {theme === 'light' ? '☾ Ciemny' : '☀ Jasny'}
+    </button>
+  );
+}
 
 // Funkcja służy do renderowania przełącznika języków na pasku nawigacji.
 function LangSwitcher() {
@@ -50,6 +65,7 @@ function Nav() {
         <Link className={active('/about')} to="/about">{t.nav.about}</Link>
       </div>
       <div className="nav-user">
+        <ThemeToggle />
         <LangSwitcher />
         {isGuest ? <Link className="nav-link" to="/login">{t.nav.login}</Link>
           : <><span className="user-name">{user?.name}</span><button className="logout-btn" onClick={logout}>{t.nav.logout}</button></>}

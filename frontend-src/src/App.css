@@ -5,6 +5,12 @@
   --accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;--warn:#e3b341;
   --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);
 }
+:root.light {
+  --bg:#ffffff;--bg2:#f6f8fa;--bg3:#eaeef2;--border:#d0d7de;
+  --text:#1f2328;--text2:#59636e;--accent:#0969da;--accent2:#1a7f37;
+  --accent3:#cf222e;--accent4:#8250df;--accent5:#bc4c00;--warn:#9a6700;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05);
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-main);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 .navbar{display:flex;align-items:center;gap:.5rem;padding:0 1.5rem;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
@@ -130,3 +136,5 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);min-hei
 .lang-btn{padding:.2rem .42rem;border-radius:4px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;letter-spacing:.03em}
 .lang-btn:hover{color:var(--text);background:var(--bg3)}
 .lang-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(88,166,255,.1)}
+.theme-btn{padding:.2rem .55rem;border-radius:4px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;margin-right:.5rem}
+.theme-btn:hover{color:var(--text);background:var(--bg3);border-color:var(--accent)}
