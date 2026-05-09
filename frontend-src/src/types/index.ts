@@ -43,10 +43,12 @@ export interface DocumentationEvaluation {
     completeness?: DocumentationScore;
     readability?: DocumentationScore;
     business_context?: DocumentationScore;
+    tech_stack?: DocumentationScore;
     tech_stack_rationale?: DocumentationScore;
     tech_stack_listed?: DocumentationScore;
   };
   extracted_libraries?: string[];
+  summary?: string;
   completeness_score?: DocumentationScore;
   readability_structure?: DocumentationScore;
   business_context?: DocumentationScore;

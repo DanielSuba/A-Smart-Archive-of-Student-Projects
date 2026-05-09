@@ -63,9 +63,8 @@ function documentationRows(project: Project) {
       ['Completeness Score (Kompletność)', scoreText(evaluation.evaluations.completeness)],
       ['Readability & Structure (Czytelność)', scoreText(evaluation.evaluations.readability)],
       ['Business Context (Kontekst biznesowy)', scoreText(evaluation.evaluations.business_context)],
-      ['Tech Stack Rationale (Uzasadnienie technologii)', scoreText(evaluation.evaluations.tech_stack_rationale)],
-      ['Tech Stack Listed (Wymienienie technologii)', scoreText(evaluation.evaluations.tech_stack_listed)],
-      ['Spis użytych bibliotek', evaluation.extracted_libraries?.length ? evaluation.extracted_libraries.join(', ') : 'Brak danych'],
+      ['Tech Stack (Technologie i uzasadnienie)', scoreText(evaluation.evaluations.tech_stack || evaluation.evaluations.tech_stack_rationale)],
+      ['Podsumowanie', evaluation.summary || 'Brak danych'],
     ];
   }
   return [
@@ -73,7 +72,6 @@ function documentationRows(project: Project) {
     ['Readability & Structure (Czytelność)', scoreText(evaluation.readability_structure)],
     ['Business Context (Kontekst biznesowy)', scoreText(evaluation.business_context)],
     ['Tech Stack Rationale (Uzasadnienie technologii)', scoreText(evaluation.tech_stack_rationale)],
-    ['Spis użytych bibliotek', evaluation.libraries_used?.length ? evaluation.libraries_used.join(', ') : 'Brak danych'],
     ['Podsumowanie', evaluation.summary || 'Brak danych'],
   ];
 }

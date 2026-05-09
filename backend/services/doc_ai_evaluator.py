@@ -28,16 +28,16 @@ Czy język jest zrozumiały? Czy autor odpowiednio użył formatowania, takiego 
 Business Context (Kontekst biznesowy) [0-10]:
 Przyznaj punkty bazowe, np. 5, jeśli dokumentacja w ogóle opisuje problem, który rozwiązuje. Resztę punktów przyznaj za to, jak dobrze i zrozumiale wyjaśniono, dlaczego to rozwiązanie jest korzystne dla biznesu.
 
-Tech Stack Rationale (Uzasadnienie technologii) [0-10]:
-Nie oceniaj tylko faktu użycia technologii. Oceń, czy autor jasno uzasadnił, dlaczego wybrał dane narzędzia, np. dlaczego użyto PostgreSQL zamiast innej bazy.
+Tech Stack (Technologie i ich uzasadnienie) [0-10]:
+Oceń razem dwie rzeczy: czy dokumentacja jasno wymienia użyte technologie oraz czy autor uzasadnił, dlaczego wybrał dane narzędzia, np. dlaczego użyto PostgreSQL zamiast innej bazy. Przyznaj mniej punktów, jeśli technologie są tylko wymienione bez uzasadnienia albo jeśli uzasadnienie jest ogólne.
 
-Tech Stack Listed (Wymienienie technologii) [0 lub 10]:
-Przyznaj 10 punktów, jeśli w dokumentacji znajduje się jawna lista lub spis użytych technologii i bibliotek. Jeśli jej brak, daj 0.
+Summary (Podsumowanie):
+Na końcu odpowiedzi podaj krótkie podsumowanie po polsku w 1-2 zdaniach. Nie oceniaj go punktowo.
 
 WYMAGANY FORMAT WYJŚCIOWY:
-Musisz odpowiedzieć WYŁĄCZNIE w formacie poprawnym, zminimalizowanym JSON, bez żadnego dodatkowego tekstu na początku ani na końcu. Klucze JSON muszą pozostać po angielsku, ale wszystkie wartości tekstowe, w szczególności pola "justification" oraz nazwy technologii i bibliotek w "extracted_libraries", wpisz po polsku. Nie używaj języka angielskiego w uzasadnieniach. Użyj dokładnie poniższej struktury:
+Musisz odpowiedzieć WYŁĄCZNIE w formacie poprawnym, zminimalizowanym JSON, bez żadnego dodatkowego tekstu na początku ani na końcu. Klucze JSON muszą pozostać po angielsku, ale wszystkie wartości tekstowe, w szczególności pola "justification" oraz "summary", wpisz po polsku. Nie wypisuj osobnego spisu bibliotek ani technologii. Nie używaj języka angielskiego w uzasadnieniach. Użyj dokładnie poniższej struktury:
 
-{"evaluations":{"completeness":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"readability":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"business_context":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"tech_stack_rationale":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"tech_stack_listed":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"}},"extracted_libraries":["lista","wykrytych","technologii","i bibliotek po polsku"]}
+{"evaluations":{"completeness":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"readability":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"business_context":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"},"tech_stack":{"score":0,"justification":"Krótkie uzasadnienie oceny po polsku"}},"summary":"Krótkie podsumowanie oceny dokumentacji po polsku"}
 
 Dokumentacja do oceny:
 __DOCUMENTATION_TEXT__
