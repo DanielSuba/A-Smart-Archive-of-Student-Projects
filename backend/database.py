@@ -99,6 +99,7 @@ class Portfolio(Base):
     public_slug = Column(String, unique=True, index=True, nullable=False)
     title = Column(String, nullable=True)
     description = Column(Text, nullable=True)
+    ai_description = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     owner = relationship("User", back_populates="portfolios")
     projects = relationship("PortfolioProject", back_populates="portfolio", cascade="all, delete-orphan")
@@ -128,6 +129,7 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     _ensure_project_columns()
     _ensure_user_columns()
+    _ensure_portfolio_columns()
 
 
 # Funkcja służy do dodawania brakujących kolumn użytkownika w istniejącej bazie.
@@ -166,3 +168,18 @@ def _ensure_project_columns():
         for name, sql_type in columns.items():
             if name not in existing:
                 conn.execute(text(f"ALTER TABLE projects ADD COLUMN {name} {sql_type}"))
+
+
+# Funkcja służy do dodawania brakujących kolumn portfolio w istniejącej bazie.
+def _ensure_portfolio_columns():
+    inspector = inspect(engine)
+    if "portfolios" not in inspector.get_table_names():
+        return
+    existing = {col["name"] for col in inspector.get_columns("portfolios")}
+    columns = {
+        "ai_description": "TEXT",
+    }
+    with engine.begin() as conn:
+        for name, sql_type in columns.items():
+            if name not in existing:
+                conn.execute(text(f"ALTER TABLE portfolios ADD COLUMN {name} {sql_type}"))

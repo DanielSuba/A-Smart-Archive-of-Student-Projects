@@ -133,6 +133,7 @@ class PortfolioOut(BaseModel):
     public_slug: str
     title: Optional[str]
     description: Optional[str]
+    ai_description: Optional[str] = None
     created_at: datetime
     owner: UserOut
     projects: List[PortfolioProjectOut] = []

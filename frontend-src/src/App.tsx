@@ -95,7 +95,7 @@ function AppRoutes() {
         <Route path="/portfolio/:slug" element={<PublicPortfolio />} />
         <Route path="/my-projects" element={<Protected><MyProjects /></Protected>} />
         <Route path="/archive" element={<Protected><Archive /></Protected>} />
-        <Route path="/project/:id" element={<Protected><ProjectDetail /></Protected>} />
+        <Route path="/project/:id" element={<ProjectDetail />} />
         <Route path="/add-project" element={<Protected><AddProject /></Protected>} />
         <Route path="/profile" element={<Protected><ProfilePage /></Protected>} />
         <Route path="/profile/:userId" element={<Protected><ProfilePage /></Protected>} />

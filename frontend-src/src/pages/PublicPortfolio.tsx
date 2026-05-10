@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { getPortfolio } from '../services/api';
 import type { Portfolio } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -40,7 +40,7 @@ export default function PublicPortfolio() {
 
   return (
     <div className="public-portfolio main-content">
-      <style>{`@media print { .no-print { display: none !important; } .card { break-inside: avoid; } }`}</style>
+      <style>{`@media print { .navbar, .no-print { display: none !important; } .main-content { padding: 0 !important; } body { background: #fff !important; } .public-portfolio { max-width: none !important; padding: 0 !important; } .pub-header, .card { box-shadow: none !important; break-inside: avoid; } }`}</style>
 
       <div className="pub-header">
         <div className="pub-badge no-print">{t.publicPortfolio.badge}</div>
@@ -49,6 +49,16 @@ export default function PublicPortfolio() {
           {portfolio.owner.name} · {t.publicPortfolio.projectsCount(portfolio.projects.length)}
         </p>
         {portfolio.description && <p style={{ color: 'var(--text2)', fontSize: '0.9rem', marginTop: '0.5rem' }}>{portfolio.description}</p>}
+        {portfolio.ai_description && (
+          <div style={{ margin: '1.25rem auto 0', maxWidth: 820, textAlign: 'left', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text2)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0, marginBottom: '0.5rem' }}>
+              {t.publicPortfolio.aiDescriptionTitle}
+            </div>
+            <div style={{ color: 'var(--text)', fontSize: '0.92rem', lineHeight: 1.75, whiteSpace: 'pre-wrap' }}>
+              {portfolio.ai_description}
+            </div>
+          </div>
+        )}
         <div style={{ marginTop: '1rem' }} className="no-print">
           <button className="btn btn-primary" onClick={handlePrint}>
             {t.publicPortfolio.downloadPdf}
@@ -61,7 +71,7 @@ export default function PublicPortfolio() {
           <div className="empty-state"><h3>{t.publicPortfolio.noProjects}</h3></div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {portfolio.projects.sort((a, b) => a.order_index - b.order_index).map(({ project: p }, idx) => (
+            {[...portfolio.projects].sort((a, b) => a.order_index - b.order_index).map(({ project: p }, idx) => (
               <div key={p.id} className="card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.75rem' }}>
                   <div>
@@ -98,6 +108,12 @@ export default function PublicPortfolio() {
                     <a href={p.repo_url} className="public-link" target="_blank" rel="noreferrer">{p.repo_url}</a>
                   </div>
                 )}
+
+                <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                  <Link to={`/project/${p.id}`} className="btn btn-primary">
+                    {t.projectCard.details}
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

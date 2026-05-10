@@ -96,6 +96,7 @@ export interface Portfolio {
   public_slug: string;
   title: string;
   description: string;
+  ai_description?: string | null;
   created_at: string;
   owner: User;
   projects: { id: number; order_index: number; project: Project }[];
