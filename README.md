@@ -140,6 +140,52 @@ Przy starcie backendu program tworzy brakujace tabele i kolumny. Jesli baza jest
 
 ## Uruchomienie projektu
 
+### Uruchomienie przez Docker
+
+Najprostszy sposob uruchomienia calego systemu jako serwera:
+
+```bash
+docker compose up --build
+```
+
+Po starcie kontenerow aplikacja bedzie dostepna pod adresem:
+
+```text
+http://localhost:8080
+```
+
+Backend bedzie dostepny bezposrednio pod adresem:
+
+```text
+http://localhost:8000
+```
+
+Docker uruchamia trzy uslugi:
+
+- `frontend` - zbudowany React serwowany przez Nginx.
+- `backend` - API FastAPI.
+- `postgres` - baza PostgreSQL 16.
+
+Wgrane dokumentacje projektow sa przechowywane w wolumenie `backend_uploads`, a dane PostgreSQL w wolumenie `postgres_data`.
+
+Jesli lokalne AI dziala w LM Studio na komputerze hosta, kontener backendu laczy sie z nim przez:
+
+```text
+http://host.docker.internal:1234/v1/chat/completions
+```
+
+Zatrzymanie kontenerow:
+
+```bash
+docker compose down
+```
+
+Zatrzymanie kontenerow razem z usunieciem danych bazy:
+
+```bash
+docker compose down -v
+```
+
 ### 1. Backend
 
 Przejdz do katalogu backendu:
