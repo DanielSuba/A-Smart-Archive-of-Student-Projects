@@ -8,8 +8,14 @@ Wykrywa technologie na podstawie:
 import httpx
 import re
 import json
+import os
 from typing import List, Dict, Tuple
 from pathlib import Path
+from dotenv import load_dotenv
+
+_BACKEND_DIR = Path(__file__).resolve().parents[1]
+load_dotenv(_BACKEND_DIR.parent / ".env")
+load_dotenv(_BACKEND_DIR / ".env")
 
 
 TECH_KEYWORDS = {
@@ -77,6 +83,15 @@ GITHUB_API_LANG_MAP = {
 
 
 # Funkcja służy do odczytywania właściciela i nazwy repozytorium z linku GitHub.
+def github_headers() -> Dict[str, str]:
+    headers = {"Accept": "application/vnd.github+json"}
+    token = os.getenv("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+        headers["X-GitHub-Api-Version"] = "2022-11-28"
+    return headers
+
+
 def parse_github_url(url: str) -> Tuple[str, str] | None:
     """Extract owner and repo from GitHub URL."""
     patterns = [
@@ -108,13 +123,14 @@ async def extract_from_github(repo_url: str) -> Dict:
         "file_count": None,
     }
     default_branch = "main"
+    headers = github_headers()
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         # Get language bytes
         try:
             resp = await client.get(
                 f"https://api.github.com/repos/{owner}/{repo}/languages",
-                headers={"Accept": "application/vnd.github+json"}
+                headers=headers
             )
             if resp.status_code == 200:
                 lang_data = resp.json()
@@ -136,7 +152,7 @@ async def extract_from_github(repo_url: str) -> Dict:
         try:
             resp = await client.get(
                 f"https://api.github.com/repos/{owner}/{repo}/contents/.github/workflows",
-                headers={"Accept": "application/vnd.github+json"}
+                headers=headers
             )
             if resp.status_code == 200:
                 has_cicd = True
@@ -147,7 +163,7 @@ async def extract_from_github(repo_url: str) -> Dict:
         try:
             resp = await client.get(
                 f"https://api.github.com/repos/{owner}/{repo}",
-                headers={"Accept": "application/vnd.github+json"}
+                headers=headers
             )
             if resp.status_code == 200:
                 repo_data = resp.json()
@@ -173,7 +189,7 @@ async def extract_from_github(repo_url: str) -> Dict:
             resp = await client.get(
                 f"https://api.github.com/repos/{owner}/{repo}/commits",
                 params={"per_page": 1},
-                headers={"Accept": "application/vnd.github+json"}
+                headers=headers
             )
             if resp.status_code == 200:
                 commits = resp.json()
@@ -187,7 +203,7 @@ async def extract_from_github(repo_url: str) -> Dict:
             resp = await client.get(
                 f"https://api.github.com/repos/{owner}/{repo}/git/trees/{default_branch}",
                 params={"recursive": "1"},
-                headers={"Accept": "application/vnd.github+json"}
+                headers=headers
             )
             if resp.status_code == 200:
                 tree = resp.json().get("tree", [])

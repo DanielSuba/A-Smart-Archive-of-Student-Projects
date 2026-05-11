@@ -4,8 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 import logging
+from pathlib import Path
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
+
+_BACKEND_DIR = Path(__file__).resolve().parent
+load_dotenv(_BACKEND_DIR.parent / ".env")
+load_dotenv(_BACKEND_DIR / ".env")
 
 
 # Funkcja służy do uruchamiania zadań startowych aplikacji i inicjalizacji bazy.
