@@ -14,32 +14,22 @@ load_dotenv(_BACKEND_DIR.parent / ".env")
 load_dotenv(_BACKEND_DIR / ".env")
 
 
-# Funkcja służy do uruchamiania zadań startowych aplikacji i inicjalizacji bazy.
+# Funkcja sluzy do uruchamiania zadan startowych aplikacji i inicjalizacji bazy.
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup: init DB and auto-seed demo data if empty."""
+    """Startup: init DB."""
     try:
-        from database import init_db, SessionLocal, User
+        from database import init_db
         init_db()
-        db = SessionLocal()
-        try:
-            if db.query(User).count() == 0:
-                logger.info("Baza pusta — uruchamiam seed...")
-                from seed import seed
-                seed()
-        except Exception as e:
-            logger.error(f"Błąd seedowania (ignoruję): {e}")
-        finally:
-            db.close()
     except Exception as e:
-        logger.error(f"Błąd inicjalizacji DB: {e}")
+        logger.error(f"Blad inicjalizacji DB: {e}")
 
     yield  # app is running
 
 
 app = FastAPI(
-    title="Inteligentne Archiwum Projektów Studenta",
-    description="System zarządzania archiwum prac projektowych z analizą technologii",
+    title="Inteligentne Archiwum Projektow Studenta",
+    description="System zarzadzania archiwum prac projektowych z analiza technologii",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -75,10 +65,10 @@ os.makedirs(_UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=_UPLOAD_DIR), name="uploads")
 
 
-# Funkcja służy do zwracania statusu działania API.
+# Funkcja sluzy do zwracania statusu dzialania API.
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Archiwum Projektów"}
+    return {"status": "ok", "service": "Archiwum Projektow"}
 
 
 if __name__ == "__main__":

@@ -142,7 +142,13 @@ async def create_project(
 
     # Calculate difficulty
     tech_list = extraction.get("technologies", [])
-    diff = calculate_difficulty(tech_list, description, extraction.get("has_cicd", False), repo_url)
+    diff = calculate_difficulty(
+        tech_list,
+        description,
+        extraction.get("has_cicd", False),
+        repo_url,
+        github_meta.get("analysis"),
+    )
     project.difficulty_score = diff["score"]
     project.difficulty_level = diff["level"]
     project.has_cicd = extraction.get("has_cicd", False)
@@ -287,7 +293,14 @@ async def update_project(
         extraction = await extract_technologies(repo_url=repo_url, description=project.description)
         await _save_technologies(project, extraction, db)
         tech_list = extraction.get("technologies", [])
-        diff = calculate_difficulty(tech_list, project.description, extraction.get("has_cicd", False), project.repo_url)
+        github_meta = extraction.get("github", {})
+        diff = calculate_difficulty(
+            tech_list,
+            project.description,
+            extraction.get("has_cicd", False),
+            project.repo_url,
+            github_meta.get("analysis"),
+        )
         project.difficulty_score = diff["score"]
         project.difficulty_level = diff["level"]
         project.has_cicd = extraction.get("has_cicd", False)
@@ -335,7 +348,14 @@ async def analyze_project(
     await _save_technologies(project, extraction, db)
 
     tech_list = extraction.get("technologies", [])
-    diff = calculate_difficulty(tech_list, project.description, extraction.get("has_cicd", False), project.repo_url)
+    github_meta = extraction.get("github", {})
+    diff = calculate_difficulty(
+        tech_list,
+        project.description,
+        extraction.get("has_cicd", False),
+        project.repo_url,
+        github_meta.get("analysis"),
+    )
     project.difficulty_score = diff["score"]
     project.difficulty_level = diff["level"]
     project.has_cicd = extraction.get("has_cicd", False)

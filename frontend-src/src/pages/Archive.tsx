@@ -5,7 +5,7 @@ import ProjectCard from '../components/ProjectCard';
 import { useLanguage } from '../contexts/LanguageContext';
 import toast from 'react-hot-toast';
 
-const DIFFICULTIES = ['', 'Początkujący', 'Średni', 'Zaawansowany', 'Ekspert'];
+const DIFFICULTIES = ['', 'Początkujący', 'Średni', 'Zaawansowany', 'Ekspert', 'Master', 'Legenda'];
 
 // Funkcja służy do renderowania globalnego archiwum projektów z filtrami.
 export default function Archive() {

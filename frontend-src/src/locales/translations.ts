@@ -172,7 +172,7 @@ const pl: T = {
     aiTechStackRationale: 'Tech Stack Rationale (Uzasadnienie technologii)',
     aiSummary: 'Podsumowanie',
     noData: 'Brak danych', noScore: 'Brak oceny',
-    scoringTitle: 'Scoring trudności', scoringUnit: 'punktów / 100',
+    scoringTitle: 'Scoring trudności', scoringUnit: '',
     infoTitle: 'Informacje',
     infoRole: 'Rola', infoTech: 'Technologii', infoCicd: 'CI/CD',
     infoDocs: 'Dokumentacja', infoAdded: 'Dodano',
@@ -237,6 +237,7 @@ const pl: T = {
   difficulty: {
     'Początkujący': 'Początkujący', 'Średni': 'Średni',
     'Zaawansowany': 'Zaawansowany', 'Ekspert': 'Ekspert',
+    'Master': 'Master', 'Legenda': 'Legenda',
   },
   dateLocale: 'pl',
 };
@@ -322,7 +323,7 @@ const en: T = {
     aiTechStackRationale: 'Tech Stack Rationale',
     aiSummary: 'Summary',
     noData: 'No data', noScore: 'No score',
-    scoringTitle: 'Difficulty Score', scoringUnit: 'points / 100',
+    scoringTitle: 'Difficulty Score', scoringUnit: '',
     infoTitle: 'Information',
     infoRole: 'Role', infoTech: 'Technologies', infoCicd: 'CI/CD',
     infoDocs: 'Documentation', infoAdded: 'Added',
@@ -387,6 +388,7 @@ const en: T = {
   difficulty: {
     'Początkujący': 'Beginner', 'Średni': 'Intermediate',
     'Zaawansowany': 'Advanced', 'Ekspert': 'Expert',
+    'Master': 'Master', 'Legenda': 'Legend',
   },
   dateLocale: 'en',
 };
@@ -477,7 +479,7 @@ const lt: T = {
     aiTechStackRationale: 'Tech Stack Rationale (Technologijų pagrindimas)',
     aiSummary: 'Apibendrinimas',
     noData: 'Nėra duomenų', noScore: 'Nėra įvertinimo',
-    scoringTitle: 'Sudėtingumo įvertinimas', scoringUnit: 'taškų / 100',
+    scoringTitle: 'Sudėtingumo įvertinimas', scoringUnit: '',
     infoTitle: 'Informacija',
     infoRole: 'Vaidmuo', infoTech: 'Technologijų', infoCicd: 'CI/CD',
     infoDocs: 'Dokumentacija', infoAdded: 'Pridėta',
@@ -542,6 +544,7 @@ const lt: T = {
   difficulty: {
     'Początkujący': 'Pradedantysis', 'Średni': 'Vidutinis',
     'Zaawansowany': 'Pažengęs', 'Ekspert': 'Ekspertas',
+    'Master': 'Meistras', 'Legenda': 'Legenda',
   },
   dateLocale: 'lt',
 };

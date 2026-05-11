@@ -17,7 +17,7 @@ Projekt sklada sie z backendu w FastAPI oraz frontendu w React + TypeScript.
   - liczba plikow w repozytorium,
   - wykrycie CI/CD.
 - Automatyczne wykrywanie technologii i bibliotek.
-- Heurystyczne obliczanie zlozonosci projektu w skali 0-100.
+- Heurystyczne obliczanie zlozonosci projektu bez gornego limitu punktow.
 - Ocena dokumentacji przez lokalny model AI.
 - Generowanie publicznego portfolio z opisem najlepszych projektow.
 - Eksport portfolio do PDF przez funkcje drukowania przegladarki.
@@ -28,20 +28,30 @@ Projekt sklada sie z backendu w FastAPI oraz frontendu w React + TypeScript.
 
 Ocena projektu nie oznacza jakosci kodu, tylko jego zlozonosc techniczna. Program wykorzystuje zestaw regul punktowych:
 
-- `+10` punktow bazowych za istnienie projektu.
-- `+10` punktow za podanie repozytorium.
-- `+5` punktow za kazda wykryta technologie z pewnoscia powyzej `20%`.
-- `+8` punktow za kazda zaawansowana technologie, np. Kubernetes, TensorFlow, PyTorch, AWS, Rust.
-- `+4` punkty za technologie sredniozaawansowane, np. React, FastAPI, PostgreSQL, TypeScript.
-- `+15` punktow za wykryte CI/CD.
-- `+5` punktow za slowa kluczowe zwiazane ze zlozonoscia, maksymalnie `20` punktow.
+- `+5` punktow bazowych za istnienie projektu.
+- `+5` punktow za obecny README.
+- `+4` punkty za `.gitignore`.
+- `+4` punkty za rozbudowane README powyzej `300` znakow.
+- `+3` punkty za `LICENSE` lub `CONTRIBUTING.md`.
+- `+2` punkty za plik Dockera.
+- Do `+10` punktow za technologie powyzej `20%` uzycia: `+8` za technologie i `-1` za kolejne progi dominacji tej technologii.
+- `+3` punkty za kazda technologie powyzej `5%` uzycia.
+- `+6` punktow za kazda z pierwszych dwoch technologii zaawansowanych, `+4` za kazda z kolejnych dwoch i `+2` za kazda nastepna, np. Kubernetes, TensorFlow, PyTorch, AWS, Rust.
+- `+3` punkty za pierwsze trzy technologie sredniozaawansowane i `+1` za kazda kolejna, np. React, FastAPI, PostgreSQL, TypeScript, Python.
+- `+1` punkt za technologie spoza listy zaawansowanych i sredniozaawansowanych.
+- `+10` punktow za wykryte CI/CD.
+- Do `+6` punktow za liczbe plikow w repozytorium, liczona progami co `10` plikow.
+- Do `+6` punktow za contributorow, po `+2` punkty za osobe.
+- Do `+10` punktow za architekture testowa: `+5` za katalog testow i `+5` za biblioteke testowa w zaleznosciach.
 
-Wynik koncowy jest ograniczony do `100` punktow i mapowany na poziom trudnosci:
+Wynik koncowy nie ma gornego limitu i jest mapowany na poziom trudnosci:
 
-- `0-24`: Poczatkujacy
-- `25-49`: Sredni
+- `0-29`: Poczatkujacy
+- `30-49`: Sredni
 - `50-74`: Zaawansowany
-- `75-100`: Ekspert
+- `75-99`: Ekspert
+- `100-124`: Master
+- `125+`: Legenda
 
 ## Integracja AI
 
@@ -107,7 +117,6 @@ Baza danych:
 │   ├── database.py              # Modele SQLAlchemy i polaczenie z baza
 │   ├── auth.py                  # Autoryzacja, JWT i hasla
 │   ├── schemas.py               # Schematy Pydantic
-│   ├── seed.py                  # Dane demonstracyjne
 │   ├── routers/                 # Endpointy API
 │   ├── services/                # Logika analizy, scoringu i AI
 │   ├── tests/                   # Testy backendu
@@ -136,7 +145,7 @@ backend/archiwum.db
 
 Adres bazy jest ustawiany w `backend/database.py`. Jesli zmienna `DATABASE_URL` nie zostanie podana, aplikacja automatycznie uzywa lokalnego pliku SQLite.
 
-Przy starcie backendu program tworzy brakujace tabele i kolumny. Jesli baza jest pusta, uruchamiany jest seed z danymi demonstracyjnymi.
+Przy starcie backendu program tworzy brakujace tabele i kolumny. Pusta baza pozostaje pusta do momentu dodania uzytkownikow, projektow i portfolio przez aplikacje.
 
 ## Uruchomienie projektu
 

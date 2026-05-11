@@ -16,6 +16,8 @@ function diffClass(level: string) {
   if (level === 'Początkujący') return 'badge badge-beginner';
   if (level === 'Średni') return 'badge badge-intermediate';
   if (level === 'Zaawansowany') return 'badge badge-advanced';
+  if (level === 'Master') return 'badge badge-master';
+  if (level === 'Legenda') return 'badge badge-legend';
   return 'badge badge-expert';
 }
 
@@ -50,7 +52,7 @@ export default function ProjectCard({ project, onDelete, showOwner, selected, on
 
       <div className="tech-list">
         {project.technologies.slice(0, 6).map(tech => (
-          <span key={tech.id} className="badge badge-tech" title={t.projectCard.confidence(Math.round(tech.confidence_level))}>
+          <span key={tech.id} className="badge badge-tech" title={t.projectCard.confidence(Number(tech.confidence_level.toFixed(1)))}>
             {tech.name}
           </span>
         ))}

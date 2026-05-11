@@ -9,9 +9,11 @@ import httpx
 import re
 import json
 import os
+import base64
 from typing import List, Dict, Tuple
 from pathlib import Path
 from dotenv import load_dotenv
+from urllib.parse import quote
 
 _BACKEND_DIR = Path(__file__).resolve().parents[1]
 load_dotenv(_BACKEND_DIR.parent / ".env")
@@ -24,6 +26,8 @@ TECH_KEYWORDS = {
     "Angular": {"category": "Frontend", "keywords": ["angular", "@angular/core", "ngmodule"]},
     "TypeScript": {"category": "Language", "keywords": ["typescript", "tsconfig", ".ts", "ts-node"]},
     "JavaScript": {"category": "Language", "keywords": ["javascript", "node_modules", "npm", "yarn"]},
+    "HTML": {"category": "Frontend", "keywords": ["html", ".html"]},
+    "CSS": {"category": "Frontend", "keywords": ["css", ".css", "scss", ".scss"]},
     "Python": {"category": "Language", "keywords": ["python", "pip", "django", "flask", "fastapi", "pytest"]},
     "Java": {"category": "Language", "keywords": ["java", "maven", "gradle", "spring", "pom.xml"]},
     "Kotlin": {"category": "Language", "keywords": ["kotlin", ".kt", "kotlinx"]},
@@ -60,6 +64,19 @@ TECH_KEYWORDS = {
     "Elasticsearch": {"category": "Database", "keywords": ["elasticsearch", "kibana", "logstash", "elk"]},
 }
 
+DEPENDENCY_FILES = {
+    "package.json",
+    "requirements.txt",
+    "pyproject.toml",
+    "pom.xml",
+    "build.gradle",
+    "build.gradle.kts",
+    "composer.json",
+    "go.mod",
+    "Cargo.toml",
+    "pubspec.yaml",
+}
+
 GITHUB_API_LANG_MAP = {
     "TypeScript": "TypeScript",
     "JavaScript": "JavaScript",
@@ -74,9 +91,9 @@ GITHUB_API_LANG_MAP = {
     "Dart": "Flutter",
     "Ruby": "Ruby",
     "Scala": "Scala",
-    "HTML": "HTML/CSS",
-    "CSS": "HTML/CSS",
-    "SCSS": "HTML/CSS",
+    "HTML": "HTML",
+    "CSS": "CSS",
+    "SCSS": "CSS",
     "Shell": "Shell",
     "Dockerfile": "Docker",
 }
@@ -121,6 +138,19 @@ async def extract_from_github(repo_url: str) -> Dict:
         "last_commit_at": None,
         "stars": None,
         "file_count": None,
+        "analysis": {},
+    }
+    repo_analysis = {
+        "readme_exists": False,
+        "readme_size": 0,
+        "gitignore_exists": False,
+        "license_exists": False,
+        "contributing_exists": False,
+        "docker_exists": False,
+        "file_count": 0,
+        "contributors_count": 0,
+        "has_tests_dir": False,
+        "dependency_text": "",
     }
     default_branch = "main"
     headers = github_headers()
@@ -209,11 +239,124 @@ async def extract_from_github(repo_url: str) -> Dict:
                 tree = resp.json().get("tree", [])
                 file_count = sum(1 for item in tree if item.get("type") == "blob")
                 github["file_count"] = 51 if file_count > 50 else file_count
+                repo_analysis.update(_analyze_repository_tree(tree))
         except Exception:
             pass
 
+        await _enrich_repository_analysis(client, owner, repo, default_branch, headers, repo_analysis, technologies)
+
+    github["analysis"] = repo_analysis
     technologies.sort(key=lambda x: x["confidence"], reverse=True)
     return {"technologies": technologies, "source": "github_api", "has_cicd": has_cicd, "github": github}
+
+
+# Funkcja sluzy do analizowania listy plikow repozytorium potrzebnej dla scoringu.
+def _analyze_repository_tree(tree: List[Dict]) -> Dict:
+    paths = [item.get("path", "") for item in tree if item.get("path")]
+    lower_paths = [path.lower() for path in paths]
+    root_or_nested_parts = {part for path in lower_paths for part in path.split("/")}
+    file_names = {Path(path).name.lower() for path in lower_paths}
+    dependency_paths = [path for path in paths if Path(path).name in DEPENDENCY_FILES]
+
+    file_count = sum(1 for item in tree if item.get("type") == "blob")
+    return {
+        "readme_exists": any(name in {"readme.md", "readme.markdown", "readme.txt"} for name in file_names),
+        "gitignore_exists": ".gitignore" in file_names,
+        "license_exists": any(name in {"license", "license.md", "license.txt"} for name in file_names),
+        "contributing_exists": any(name in {"contributing.md", "contributing.txt"} for name in file_names),
+        "docker_exists": any(
+            name == "dockerfile"
+            or name.endswith(".dockerfile")
+            or name in {"docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml"}
+            for name in file_names
+        ),
+        "file_count": file_count,
+        "has_tests_dir": bool(root_or_nested_parts & {"tests", "__tests__", "spec", "test"}),
+        "dependency_paths": dependency_paths,
+    }
+
+
+# Funkcja sluzy do doczytywania README, zaleznosci i liczby contributorow z GitHub API.
+async def _enrich_repository_analysis(
+    client: httpx.AsyncClient,
+    owner: str,
+    repo: str,
+    branch: str,
+    headers: Dict[str, str],
+    repo_analysis: Dict,
+    technologies: List[Dict],
+):
+    dependency_parts = []
+    for path in repo_analysis.get("dependency_paths", [])[:20]:
+        content = await _fetch_github_file(client, owner, repo, branch, path, headers)
+        if content:
+            dependency_parts.append(content[:20000])
+            _merge_detected_technologies(technologies, extract_from_text(content).get("technologies", []))
+
+    readme_text = ""
+    for readme_name in ("README.md", "readme.md", "README.markdown", "README.txt"):
+        readme_text = await _fetch_github_file(client, owner, repo, branch, readme_name, headers)
+        if readme_text:
+            break
+
+    repo_analysis["readme_exists"] = repo_analysis.get("readme_exists") or bool(readme_text)
+    repo_analysis["readme_size"] = len(readme_text)
+    repo_analysis["dependency_text"] = " ".join(dependency_parts).lower()
+    repo_analysis["contributors_count"] = await _get_contributors_count(client, owner, repo, headers)
+
+
+# Funkcja sluzy do pobierania pliku z GitHub API jako tekst.
+async def _fetch_github_file(
+    client: httpx.AsyncClient,
+    owner: str,
+    repo: str,
+    branch: str,
+    path: str,
+    headers: Dict[str, str],
+) -> str:
+    try:
+        resp = await client.get(
+            f"https://api.github.com/repos/{owner}/{repo}/contents/{quote(path, safe='/')}",
+            params={"ref": branch},
+            headers=headers,
+        )
+        if resp.status_code != 200:
+            return ""
+        data = resp.json()
+        if isinstance(data, dict) and data.get("encoding") == "base64" and data.get("content"):
+            return base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
+        if isinstance(data, dict) and data.get("download_url"):
+            raw_resp = await client.get(data["download_url"], headers=headers)
+            if raw_resp.status_code == 200:
+                return raw_resp.text
+    except Exception:
+        return ""
+    return ""
+
+
+# Funkcja sluzy do pobierania liczby contributorow repozytorium.
+async def _get_contributors_count(client: httpx.AsyncClient, owner: str, repo: str, headers: Dict[str, str]) -> int:
+    try:
+        resp = await client.get(
+            f"https://api.github.com/repos/{owner}/{repo}/contributors",
+            params={"per_page": 100, "anon": "true"},
+            headers=headers,
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            return len(data) if isinstance(data, list) else 0
+    except Exception:
+        return 0
+    return 0
+
+
+# Funkcja sluzy do laczenia technologii wykrytych z plikow zaleznosci z lista technologii projektu.
+def _merge_detected_technologies(technologies: List[Dict], detected: List[Dict]):
+    known = {item.get("name") for item in technologies}
+    for item in detected:
+        if item.get("name") not in known:
+            technologies.append(item)
+            known.add(item.get("name"))
 
 
 # Funkcja służy do wykrywania technologii na podstawie tekstu.

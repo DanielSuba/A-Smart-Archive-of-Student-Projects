@@ -51,7 +51,7 @@ def build_portfolio_prompt(author_name: str, projects: list[dict[str, Any]]) -> 
         description = (project.get("description") or "").strip() or "brak opisu"
         role = (project.get("role") or "").strip() or "brak danych"
         score = project.get("difficulty_score")
-        score_text = f"{score:.0f}/100" if isinstance(score, (int, float)) else "brak danych"
+        score_text = f"{score:.0f} punktów" if isinstance(score, (int, float)) else "brak danych"
         project_blocks.append(
             "\n".join([
                 f"Projekt {index}: {project.get('title') or 'Bez tytułu'}",

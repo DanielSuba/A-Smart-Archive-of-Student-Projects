@@ -33,7 +33,8 @@ export default function PublicPortfolio() {
   // Funkcja służy do renderowania tekstowej etykiety poziomu trudności w portfolio.
   const diffBadge = (level: string) => {
     const colors: Record<string, string> = {
-      'Początkujący': '#3fb950', 'Średni': '#58a6ff', 'Zaawansowany': '#d2a8ff', 'Ekspert': '#f78166'
+      'Początkujący': '#3fb950', 'Średni': '#58a6ff', 'Zaawansowany': '#d2a8ff',
+      'Ekspert': '#f78166', 'Master': '#f85149', 'Legenda': '#ffffff'
     };
     return <span style={{ color: colors[level] || '#888', fontWeight: 500, fontSize: '0.8rem' }}>{t.difficulty[level] || level}</span>;
   };
@@ -84,7 +85,7 @@ export default function PublicPortfolio() {
                   <div style={{ textAlign: 'right' }}>
                     {diffBadge(p.difficulty_level)}
                     <div style={{ fontSize: '0.75rem', color: 'var(--text2)', marginTop: '0.25rem' }}>
-                      Score: {p.difficulty_score.toFixed(0)}/100
+                      Score: {p.difficulty_score.toFixed(0)}
                     </div>
                   </div>
                 </div>
@@ -96,7 +97,7 @@ export default function PublicPortfolio() {
                     <div style={{ fontSize: '0.78rem', color: 'var(--text2)', marginBottom: '0.4rem', fontWeight: 500 }}>{t.publicPortfolio.technologies}</div>
                     <div className="tech-list">
                       {p.technologies.slice(0, 8).map(tech => (
-                        <span key={tech.id} className="badge badge-tech" title={`${tech.confidence_level.toFixed(0)}%`}>{tech.name}</span>
+                        <span key={tech.id} className="badge badge-tech" title={`${tech.confidence_level.toFixed(1)}%`}>{tech.name}</span>
                       ))}
                       {p.technologies.length > 8 && <span className="badge badge-tech">+{p.technologies.length - 8}</span>}
                     </div>

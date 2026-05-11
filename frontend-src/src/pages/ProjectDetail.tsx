@@ -11,7 +11,8 @@ function DiffBadge({ level }: { level: string }) {
   const { t } = useLanguage();
   const cls: Record<string, string> = {
     'Początkujący': 'badge-beginner', 'Średni': 'badge-intermediate',
-    'Zaawansowany': 'badge-advanced', 'Ekspert': 'badge-expert'
+    'Zaawansowany': 'badge-advanced', 'Ekspert': 'badge-expert',
+    'Master': 'badge-master', 'Legenda': 'badge-legend'
   };
   return <span className={`badge ${cls[level] || 'badge-beginner'}`}>{t.difficulty[level] || level}</span>;
 }
@@ -229,7 +230,7 @@ export default function ProjectDetail() {
                   <div key={tech.id} className="confidence-bar">
                     <span style={{ minWidth: '120px', fontSize: '0.82rem' }}>{tech.name}</span>
                     <ConfBar confidence={tech.confidence_level} />
-                    <span style={{ minWidth: '40px', textAlign: 'right', color: 'var(--text2)' }}>{tech.confidence_level.toFixed(0)}%</span>
+                    <span style={{ minWidth: '48px', textAlign: 'right', color: 'var(--text2)' }}>{tech.confidence_level.toFixed(1)}%</span>
                     {tech.category && <span className="badge badge-tech">{tech.category}</span>}
                   </div>
                 ))
@@ -254,12 +255,14 @@ export default function ProjectDetail() {
                 <div style={{ fontSize: '2.5rem', fontFamily: 'inherit', color: 'var(--accent)', fontWeight: 600 }}>
                   {project.difficulty_score.toFixed(0)}
                 </div>
-                <div style={{ color: 'var(--text2)', fontSize: '0.82rem', marginBottom: '0.75rem' }}>{t.projectDetail.scoringUnit}</div>
+                {t.projectDetail.scoringUnit && (
+                  <div style={{ color: 'var(--text2)', fontSize: '0.82rem', marginBottom: '0.75rem' }}>{t.projectDetail.scoringUnit}</div>
+                )}
                 <DiffBadge level={project.difficulty_level} />
               </div>
               <div style={{ marginTop: '0.75rem' }}>
                 <div style={{ background: 'var(--bg3)', borderRadius: '6px', overflow: 'hidden', height: '10px' }}>
-                  <div style={{ width: `${project.difficulty_score}%`, height: '100%', background: 'linear-gradient(90deg, var(--accent2), var(--accent4))', transition: 'width 0.8s ease' }} />
+                  <div style={{ width: `${Math.min(project.difficulty_score, 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--accent2), var(--accent4))', transition: 'width 0.8s ease' }} />
                 </div>
               </div>
             </div>
